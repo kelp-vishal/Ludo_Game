@@ -1,0 +1,25 @@
+.RoomCJ{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    height: 100vh;
+    place-content: 10px;
+}
+.createRoom, .joinRoom{
+    border: 2px solid black;
+    padding: 20px;
+    margin: 10px;
+    width: 300px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
+    border-radius: 10px;
+}
+.createRoom h1, .joinRoom h1{
+    font-size: 24px;
+    margin-bottom: 20px;
+}
