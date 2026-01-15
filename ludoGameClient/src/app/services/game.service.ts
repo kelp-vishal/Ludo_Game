@@ -21,15 +21,15 @@ export class GameService {
 
   private gameStateSubject = new BehaviorSubject<IGameState>(this.gameState);
   gameState$ = this.gameStateSubject.asObservable();
-
+  pieces: IPiece[] = [];
   initPieces() {
     //for active player use loop for each color and push to pieces array
 
-    const pieces: IPiece[] = [];
+    
     // this.gameState.activePlayers.forEach(player =>  {
     //   // const color = this.gameState.activePlayers[activePlayer];
     //   if(player.includes('RED')) {
-    //     pieces.push(
+    //     this.pieces.push(
     //       { id: 'RED_0', color: 'red', position: -1, currentX: 40, currentY: 400 },
     //       // {id: 'RED_0', color:'red', position: -1, currentX: 40, currentY: 240},
     //       { id: 'RED_1', color: 'red', position: -1, currentX: 40, currentY: 520 },
@@ -37,7 +37,7 @@ export class GameService {
     //       { id: 'RED_3', color: 'red', position: -1, currentX: 160, currentY: 520 });
     //   }
     //   else if(player.includes('YELLOW')) {
-    //       pieces.push(
+    //       this.pieces.push(
     //         { id: 'YELLOW_0', color: 'yellow', position: -1, currentX: 400, currentY: 400 },
     //         { id: 'YELLOW_1', color: 'yellow', position: -1, currentX: 520, currentY: 400 },
     //         { id: 'YELLOW_2', color: 'yellow', position: -1, currentX: 400, currentY: 520 },
@@ -45,7 +45,7 @@ export class GameService {
     //       )
     //   }
     //   else if(player.includes('GREEN')) {
-    //       pieces.push(
+    //       this.pieces.push(
     //         { id: 'GREEN_0', color: 'green', position: -1, currentX: 400, currentY: 40 },
     //       { id: 'GREEN_1', color: 'green', position: -1, currentX: 400, currentY: 160 },
     //       { id: 'GREEN_2', color: 'green', position: -1, currentX: 520, currentY: 40 },
@@ -53,7 +53,7 @@ export class GameService {
     //       )
     //   }
     //   else if(player.includes('BLUE')) {
-    //       pieces.push(
+    //       this.pieces.push(
     //         { id: 'BLUE_0', color: 'blue', position: -1, currentX: 40, currentY: 40 },
     //         { id: 'BLUE_1', color: 'blue', position: -1, currentX: 40, currentY: 160 },
     //         { id: 'BLUE_2', color: 'blue', position: -1, currentX: 160, currentY: 40 },
@@ -89,9 +89,7 @@ export class GameService {
     ]);
   }
 
-  
-
-  pieces: IPiece[] = [];
+  // pieces: IPiece[] = [];
   constructor() {
     this.initPieces();
   }
@@ -126,7 +124,7 @@ export class GameService {
     // now update piece positions
     // this.initPieces();
 
-    console.log('Initialized pieces:', this.piecesSubject);
+    console.log('Initialized pieces:', this.pieces);
 
   }
 

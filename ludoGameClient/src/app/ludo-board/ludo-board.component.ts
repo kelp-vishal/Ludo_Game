@@ -45,11 +45,8 @@ export class LudoBoardComponent implements OnInit{
 
   pieces: IPiece[] = [];
   gameState: IGameState | null = null;
-  // movablePieces: string[] = [];
   //15x15=225
   gridCells = Array(225).fill(0);
-
-  // constructor(public gameService: GameService) { }
 
   gameService = inject(GameService);
 
@@ -58,6 +55,7 @@ export class LudoBoardComponent implements OnInit{
   ngOnInit() {
 
     this.gameService.initPieces();
+
     // Subscribe to gameState changes
     this.gameService.gameState$.subscribe(state => {
       this.gameState = state;
@@ -66,14 +64,11 @@ export class LudoBoardComponent implements OnInit{
   }
 
   triggerAnimations() {
-    // Animate movable pieces
     if(!this.gameState) return;
     this.gameState.movablePieces.forEach(pieceId => {
       const piece = this.gameService.pieces.find(p => p.id === pieceId);
       if (piece) {
-        // Example: Add animation class, or move piece gradually
         console.log(`Animate piece ${piece.id} at position ${piece.position}`);
-        // e.g., this.animatePiece(piece);
       }
     });
   }

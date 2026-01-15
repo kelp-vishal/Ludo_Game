@@ -32,7 +32,7 @@
     background-color: rgb(190, 203, 249);
 }
 input {
-  color:white;
+  color:rgb(0, 0, 0);
 }
 #playerName{
     background-color: rgb(190, 203, 249);
@@ -54,7 +54,7 @@ input {
     padding: 10px 20px;
     font-size: 18px;
     background-color: #4CAF50;
-    color: white;
+    color: rgb(0, 0, 0);
     border: none;
     border-radius: 5px;
     cursor: pointer;
