@@ -1,11 +1,13 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { LudoBoardComponent } from './ludo-board/ludo-board.component';
 import { HeaderComponent } from './components/header/header.component';
-import { WebSocketConnectivityComponent } from './web-socket-connectivity/web-socket-connectivity.component';
+import { GameSetupComponent } from './game-setup/game-setup.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,HeaderComponent,WebSocketConnectivityComponent],
+  
+  imports: [RouterOutlet,LudoBoardComponent,HeaderComponent,GameSetupComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

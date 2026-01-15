@@ -1,0 +1,95 @@
+
+<div class="game-container">
+  <!-- <h1>Hello</h1> -->
+  <div class="ludo-board">
+    <div class="cell" 
+         *ngFor="let cell of gridCells; let i =index"
+         [style.grid-column]="(i% 15)+1"
+
+         [style.grid-row]="Math.floor(i/15)+1"
+         [class.home-red]="isRedHome(i)"
+         [class.home-yellow]="isYellowHome(i)"
+         [class.home-green]="isGreenHome(i)"
+         [class.home-blue]="isBlueHome(i)"
+         [class.red-path]="isRedPath(i)"
+         [class.yellow-path]="isYellowPath(i)"
+         [class.blue-path]="isBluePath(i)"
+         [class.green-path]="isGreenPath(i)"
+         
+         [class.safe-zone]="isSafeZone(i)"
+         
+         [class.finish-zone]="isFinishZone(i)"
+         [class.path]="true">
+         
+    </div>
+
+    <!-- Pieces -->
+    <div *ngFor="let piece of pieces$ | async"
+         class="piece" 
+         [class.red]="piece.color === 'red'"
+         [class.yellow]="piece.color === 'yellow'"
+         [class.blue]="piece.color === 'blue'"
+         [class.green]="piece.color === 'green'"
+          [class.movable]="gameService.gameState.movablePieces?.includes(piece.id)" 
+         [style.left.px]="piece.currentX"
+         [style.top.px]="piece.currentY"
+         (click)="selectPiece(piece.id)"
+         [attr.data-id]="piece.id">
+    </div>
+  </div>
+
+  <div class="dice-button">
+    <div>{{getCurrentPlayer()}}'s Turn ({{gameService.gameState.diceValue || '?'}})</div>
+    <button class="roll-btn" (click)="rollDice()">
+      Roll Dice
+    </button>
+    <div *ngIf="isGameWon()" class="win-message">
+      {{gameService.gameState.gameWon}} WINS! 
+    </div>
+  </div>
+</div>
+
+<!-- <div
+  *ngFor="let piece of gameService.pieces"
+  [ngStyle]="{ left: piece.currentX + 'px', top: piece.currentY + 'px' }"
+  [class.movable]="gameState.movablePieces.includes(piece.id)">
+</div> -->
+
+
+
+<!-- <div class="game-container">
+  Game Info
+  <div class="dice-button">
+    <div>{{getCurrentPlayer()}}'s Turn ({{gameService.gameState.diceValue || '?'}})</div>
+    <button class="roll-btn" (click)="rollDice()" [disabled]="gameService.gameState.diceValue > 0 || isGameWon()">
+      Roll Dice
+    </button>
+    <div *ngIf="isGameWon()" class="win-message">
+      {{gameService.gameState.gameWon}} WINS! 
+    </div>
+  </div>  -->
+ 
+  <!-- 15x15 Board -->
+  <!-- <div class="ludo-board">
+    <div class="cell" *ngFor="let cell of gridCells; let i = index"
+         [style.grid-column]="(i % 15) + 1"
+         [style.grid-row]="Math.floor(i / 15) + 1">
+    </div>  -->
+    <!-- Visible Pieces Only -->
+    <!-- <div *ngFor="let piece of getVisiblePieces()"
+         class="piece"
+         [class.red]="piece.color === 'red'"
+         
+         [style.left.px]="piece.currentX"
+         [style.top.px]="piece.currentY"
+         (click)="selectPiece(piece.id)">
+    </div> -->
+  <!-- </div> -->
+<!-- </div> -->
+ 
+ 
+
+
+
+
+

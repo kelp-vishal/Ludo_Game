@@ -1,5 +1,9 @@
-
-<div class="RoomCJ">
+<div>
+    <div class="containers">
+        <h1>Let's Play Ludo!</h1>
+    </div>
+    <div class="RoomCJ">
+        
     <div class="createRoom">
         <h1>Create the Room</h1>
 
@@ -8,7 +12,6 @@
             <input type="text" id="roomName" name="roomName" />
         </li>
 
-        <!-- // first show all the room which are available to join -->
         <li>
             <label for="maxPlayers">Max Players:</label>
             <select id="maxPlayers" name="maxPlayers">
@@ -25,10 +28,15 @@
             <input type="text" id="roomCode" name="roomCode" />
         </li>
 
-        <!-- // first show all the room which are available to join -->
         <li>
             <label for="playerName">Player Name:</label>
             <input type="text" id="playerName" name="playerName" />
         </li>
     </div>
+</div>
+</div>
+
+<div class="containers">
+    <h1>Enjoy Playing Locally</h1>
+    <button class="local-btn" (click)="playLocally()">Play Locally</button>
 </div>

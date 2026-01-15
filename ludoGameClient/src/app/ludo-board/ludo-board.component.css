@@ -1,0 +1,228 @@
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #0210b0 0%, #3782d3 100%);
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+.ludo-board {
+  width: 604px;
+  height: 604px;
+  display: grid;
+  grid-template-columns: repeat(15, 40px);
+  grid-template-rows: repeat(15, 40px);
+  gap: 0;
+  border: 2px solid #000000;
+  position: relative;
+  background: #ecf0f1;
+  box-shadow: 0 16px 64px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+}
+
+.cell {
+  border: 0.5px solid #00060a;
+  background: #fff;
+  border-radius: 10%;
+}
+
+
+.home-red { 
+  background: rgba(231, 76, 60, 0.4) !important; 
+  border-color: #c0392b !important;
+}
+.home-yellow { 
+  background: rgba(243, 156, 18, 0.4) !important; 
+  border-color: #d68910 !important;
+}
+.home-green { 
+  background: rgba(39, 174, 96, 0.4) !important; 
+  border-color: #229954 !important;
+}
+.home-blue { 
+  background: rgba(52, 152, 219, 0.4) !important; 
+  border-color: #2980b9 !important;
+}
+
+.center {
+  background: radial-gradient(circle, #f1c40f, #e67e22) !important;
+  border: 2px solid #d35400 !important;
+}
+
+.path { 
+  background: rgba(255, 255, 255, 0.9); 
+}
+
+.piece {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  position: absolute;
+  border: 3px solid white;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 12px;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.piece:hover {
+  transform: scale(1.1);
+}
+
+.piece.red { 
+  background: linear-gradient(135deg, #e74c3c, #c0392b); 
+}
+.piece.yellow { 
+  background: linear-gradient(135deg, #f39c12, #d68910);
+  color: #333;
+  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+  /* transition: transform 0.8s ease; */
+}
+.piece.green { 
+  background: linear-gradient(135deg, #27ae60, #229954); 
+}
+.piece.blue { 
+  background: linear-gradient(135deg, #3498db, #2980b9); 
+}
+
+.piece.movable {
+  transform: scale(1.4);
+  box-shadow: 0 0 30px 8px gold, 0 0 60px 12px rgba(255, 215, 0, 0.4);
+  animation: pulse 0.8s ease-in-out infinite;
+  cursor: pointer;
+  z-index: 20;
+}
+
+.movable {
+  transition: all 0.5s ease;
+  transform: scale(1.2); /* example animation */
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    transform: scale(1.4); 
+    box-shadow: 0 0 30px 8px gold, 0 0 60px 12px rgba(255, 215, 0, 0.4);
+  }
+  50% { 
+    transform: scale(1.5); 
+    box-shadow: 0 0 40px 12px gold, 0 0 80px 16px rgba(255, 215, 0, 0.6);
+  }
+}
+
+.piece-label {
+  user-select: none;
+  pointer-events: none;
+}
+
+.dice-button {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.roll-btn {
+  padding: 15px 35px;
+  font-size: 20px;
+  font-weight: bold;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(52, 152, 219, 0.4);
+}
+
+.roll-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
+  background: linear-gradient(135deg, #5dade2, #3498db);
+}
+
+.roll-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.roll-btn:disabled {
+  background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.6;
+}
+
+.game-status {
+  margin-top: 20px;
+  background: white;
+  padding: 15px 30px;
+  border-radius: 12px;
+  font-size: 18px;
+  color: #2c3e50;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.game-status p {
+  margin: 0;
+  font-weight: 500;
+}
+
+
+.safe-zone {
+  width: 38px;             
+  height: 38px;           
+  background: rgb(235, 213, 87);       
+  display: center;
+  border-color: #000000;
+ 
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+}
+/* .safe-zone{
+  background: rgba(0, 0, 0, 0.2) !important;
+  border-color: #dda115 !important;
+} */
+.start-zone{
+  background: rgba(255, 136, 0, 0.2)!important;
+  border-color: #e67e22 !important;
+}
+.finish-zone{
+  background: rgba(251, 0, 239, 0.2) !important;
+  border-color: #ba0aff !important;
+}
+
+.red-path {
+  background: #ff040033 !important;
+  border-color: #ff1900 !important;
+}
+.yellow-path {
+  background: rgba(249, 154, 0, 0.2) !important;
+  border-color: #d68910 !important;
+}
+.green-path {
+  background: rgba(0, 202, 84, 0.2) !important;
+  border-color: #229954 !important;
+}
+.blue-path {
+  background: rgba(32, 142, 215, 0.2) !important;
+  border-color: #2980b9 !important;
+}

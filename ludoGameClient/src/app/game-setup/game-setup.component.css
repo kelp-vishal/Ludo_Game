@@ -1,0 +1,20 @@
+.setup-screen {
+    text-align: center;
+    padding: 50px;
+    /* background-color: #f0f8ff; */
+    font: 500 20px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.setup-screen h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #0bcddf;
+}
+
+.player-buttons button {
+    display: block;
+    margin: 20px auto;
+    padding: 15px 30px;
+    font-size: 18px;
+    background-color: rgb(98, 111, 181);
+    cursor: pointer;
+}

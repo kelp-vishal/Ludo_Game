@@ -34,7 +34,8 @@ export class AuthService {
         // store user in db
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await this.userService.createUser(username as string, hashedPassword, Email as string);
-        return {message:'User registered successfully', userId:newUser.id, username:newUser.username};
+        return true;
+        // return {message:'User registered successfully', userId:newUser.id, username:newUser.username};
     }
 
 }

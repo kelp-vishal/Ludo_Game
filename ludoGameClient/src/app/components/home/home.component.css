@@ -1,25 +1,31 @@
 .home {
     text-align: left;
-    margin-top: 50px;
+    /* margin-top: 50px; */
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 40px;
     position: relative;
     z-index: 1;
+    /* background-color: black; */
+    width: 90%;
+   max-width: 200rem;
+   margin: 4rem auto;
+   padding: 4rem;
+   font-family: 'Courier New', Courier, monospace;
 }
 
 .home h1 {
     font-family: 'Times New Roman', Times, serif;
     font-size: 48px;
-    color: #0b3a4a;
+    color: #1a9ac4;
     margin: 0;
 }
 
 .home p {
     font-family: 'Times New Roman', Times, serif;
     font-size: 20px;
-    color: #333;
+    color: #ffffff;
     margin: 0;
 }
 
@@ -42,11 +48,38 @@ button {
     border-radius: 5px;
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin:50px;
+    margin:20px;
 }
 
 button:hover {
-    color: white;
-    background-color: #396704;
+    /* color: white; */
+    background-color: #579f06;
     box-shadow: 0 6px 8px rgba(3, 233, 245, 0.15);
 }
+
+.welcome-message{
+    max-width: 600px;
+    margin-right: 40px;
+    color: #f0f0f0;
+}
+
+.animated-btn {
+        padding: 15px 40px;
+        /* font-size: 18px;
+        font-weight: bold; */
+        color: rgb(0, 0, 0);
+        background: linear-gradient(45deg, #ff0000,  #fffb00, #48ff00, #002bff);
+        background-size: 400% 400%;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        animation: gradientShift 5s ease infinite;
+}
+
+   
+@keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+}
+
