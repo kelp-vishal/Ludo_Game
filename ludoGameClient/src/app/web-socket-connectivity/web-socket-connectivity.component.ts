@@ -7,21 +7,21 @@ import { io, Socket } from 'socket.io-client';
   styleUrl: './web-socket-connectivity.component.css'
 })
 export class WebSocketConnectivityComponent {
-  socket: Socket;
+  // socket: Socket;
 
-  constructor() { 
-    this.socket=io('http://localhost:3002');
-  }
+  // constructor() { 
+  //   this.socket=io('http://localhost:3002');
+  // }
 
-  ngOnInit(): void {
-    this.socket.on('connect', () => {
-      console.log('Connected to WebSocket server');
-    });
+  // ngOnInit(): void {
+  //   this.socket.on('connect', () => {
+  //     console.log('Connected to WebSocket server with ID:', this.socket.id);
+  //   });
 
-    this.socket.on('disconnect', () => {
-      console.log('Disconnected from WebSocket server'); 
-    });
-  }
+  //   this.socket.on('disconnect', () => {
+  //     console.log('Disconnected from WebSocket server with ID:', this.socket.id); 
+  //   });
+  // }
       
 }  
 

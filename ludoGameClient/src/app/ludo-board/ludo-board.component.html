@@ -30,21 +30,27 @@
          [class.yellow]="piece.color === 'yellow'"
          [class.blue]="piece.color === 'blue'"
          [class.green]="piece.color === 'green'"
-          [class.movable]="gameService.gameState.movablePieces?.includes(piece.id)" 
-         [style.left.px]="piece.currentX"
-         [style.top.px]="piece.currentY"
+          [class.movable]="gameService.gameState.movablePieces.includes(piece.id)" 
+         [style.left.px]="piece.currentX + getPieceOffset(piece).x"
+         [style.top.px]="piece.currentY + getPieceOffset(piece).y"
+         [style.transform]="'scale('+getPieceScale(piece)+ ')'"
          (click)="selectPiece(piece.id)"
          [attr.data-id]="piece.id">
     </div>
   </div>
 
   <div class="dice-button">
-    <div>{{getCurrentPlayer()}}'s Turn ({{gameService.gameState.diceValue || '?'}})</div>
-    <button class="roll-btn" (click)="rollDice()">
-      Roll Dice
+    
+<div class="turn-info">{{getCurrentPlayer()}}'s Turn</div>
+    <div class="dice-value">Dice: {{gameService.gameState.diceValue || 'Roll to start'}}</div>
+    <button class="roll-btn" 
+            (click)="rollDice()" 
+            [disabled]="gameService.gameState.diceValue > 0 || isGameWon()">
+      {{gameService.gameState.diceValue > 0 ? 'Move a piece' : 'Roll Dice'}}
+
     </button>
     <div *ngIf="isGameWon()" class="win-message">
-      {{gameService.gameState.gameWon}} WINS! 
+      {{gameService.gameState.gameWon}} WINS!! 
     </div>
   </div>
 </div>

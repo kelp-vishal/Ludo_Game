@@ -3,11 +3,12 @@ import { RouterOutlet } from '@angular/router';
 import { LudoBoardComponent } from './ludo-board/ludo-board.component';
 import { HeaderComponent } from './components/header/header.component';
 import { GameSetupComponent } from './game-setup/game-setup.component';
+import { WebSocketConnectivityComponent } from './web-socket-connectivity/web-socket-connectivity.component';
 
 @Component({
   selector: 'app-root',
   
-  imports: [RouterOutlet,LudoBoardComponent,HeaderComponent,GameSetupComponent],
+  imports: [RouterOutlet,LudoBoardComponent,HeaderComponent,GameSetupComponent,WebSocketConnectivityComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

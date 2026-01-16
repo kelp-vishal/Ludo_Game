@@ -1,9 +1,12 @@
 
-import { Component, OnInit, signal,inject } from '@angular/core';
+import { Component, OnInit, signal, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IPiece } from '../interfaces/ludoboard.interfaces';
 import { IGameState } from '../interfaces/ludoboard.interfaces';
 import { GameService } from '../services/game.service';
+import { SocketService } from '../services/socket.service';
+import { RoomService } from '../services/room.service';
+import { Subscription } from 'rxjs';
 
 let gameState = {
   currentTurn: 'RED',
@@ -36,8 +39,7 @@ let gameState = {
   templateUrl: './ludo-board.component.html',
   styleUrls: ['./ludo-board.component.css']
 })
-export class LudoBoardComponent implements OnInit{
-  
+export class LudoBoardComponent implements OnInit, OnDestroy {
 
   Math = Math;
   turnOrder = ['RED', 'YELLOW', 'GREEN', 'BLUE'];
@@ -49,22 +51,53 @@ export class LudoBoardComponent implements OnInit{
   gridCells = Array(225).fill(0);
 
   gameService = inject(GameService);
+  socketService = inject(SocketService);
+  roomService = inject(RoomService);
 
   pieces$ = this.gameService.pieces$;
+  currentRoom$ = this.roomService.currentRoom$;
+  players$ = this.roomService.players$;
+
+  private subscriptions: Subscription[] = [];
 
   ngOnInit() {
-
-    this.gameService.initPieces();
-
     // Subscribe to gameState changes
-    this.gameService.gameState$.subscribe(state => {
+    const gameStateSubscription = this.gameService.gameState$.subscribe(state => {
       this.gameState = state;
       this.triggerAnimations();
+      // Broadcast game state to other players
+      this.syncGameStateWithOthers();
     });
+
+    // Subscribe to socket game state updates from other players
+    const socketStateSubscription = this.socketService.gameState$.subscribe(remoteState => {
+      if (remoteState && remoteState.updatedBy !== this.socketService.getSocketId()) {
+        console.log('Received game state update from another player:', remoteState);
+        // You can merge the remote state with local state if needed
+      }
+    });
+
+    this.subscriptions.push(gameStateSubscription, socketStateSubscription);
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
+  }
+
+  syncGameStateWithOthers(): void {
+    if (this.gameState) {
+      this.socketService.sendGameStateUpdate({
+        currentTurn: this.gameState.currentTurn,
+        diceValue: this.gameState.diceValue,
+        pieces: this.gameState.pieces,
+        movablePieces: this.gameState.movablePieces,
+        timestamp: new Date()
+      });
+    }
   }
 
   triggerAnimations() {
-    if(!this.gameState) return;
+    if (!this.gameState) return;
     this.gameState.movablePieces.forEach(pieceId => {
       const piece = this.gameService.pieces.find(p => p.id === pieceId);
       if (piece) {
@@ -74,15 +107,51 @@ export class LudoBoardComponent implements OnInit{
   }
 
   rollDice() {
+    console.log(this.gameState);
     if (!this.gameState?.gameWon) {
       this.gameService.rollDice();
     }
   }
 
-  selectPiece(pieceId: string) {
-    if (this.gameService.movePiece(pieceId)) {
+  async selectPiece(pieceId: string) {
+    const moved = await this.gameService.movePiece(pieceId);
+    if (moved === true) {
       // Piece moved successfully
+      console.log('Piece moved:', pieceId);
     }
+  }
+
+  getPieceScale(piece: any): number {
+    // Count how many pieces are at the same position
+    const pieces = this.gameService.pieces || [];
+    const samePosition = pieces.filter(p => 
+      p.currentX === piece.currentX && 
+      p.currentY === piece.currentY &&
+      p.position >= 0
+    ).length;
+    
+    // Scale down if multiple pieces at same position
+    return samePosition > 1 ? 0.7 : 1;
+  }
+
+  getPieceOffset(piece: any): { x: number; y: number } {
+    const pieces = this.gameService.pieces || [];
+    const samePosArray = pieces.filter(p => 
+      p.currentX === piece.currentX && 
+      p.currentY === piece.currentY &&
+      p.position >= 0
+    );
+    
+    if (samePosArray.length <= 1) return { x: 0, y: 0 };
+    
+    const index = samePosArray.findIndex(p => p.id === piece.id);
+    const offset = 8;
+    
+    // Offset pieces in a circular pattern
+    return {
+      x: index * offset,
+      y: index * offset
+    };
   }
 
   getVisiblePieces() {
@@ -98,102 +167,6 @@ export class LudoBoardComponent implements OnInit{
     return this.gameService.gameState.gameWon;
 
   }
-
-  // initPieces() {
-  //   this.pieces = [
-  //     { id: 'RED_0', color: 'red', position: -1, currentX: 40, currentY: 400 },
-  //     // {id: 'RED_0', color:'red', position: -1, currentX: 40, currentY: 240},
-  //     { id: 'RED_1', color: 'red', position: -1, currentX: 40, currentY: 520 },
-  //     { id: 'RED_2', color: 'red', position: -1, currentX: 160, currentY: 400 },
-  //     { id: 'RED_3', color: 'red', position: -1, currentX: 160, currentY: 520 },
-
-  //     { id: 'YELLOW_0', color: 'yellow', position: -1, currentX: 400, currentY: 400 },
-  //     { id: 'YELLOW_1', color: 'yellow', position: -1, currentX: 520, currentY: 400 },
-  //     { id: 'YELLOW_2', color: 'yellow', position: -1, currentX: 400, currentY: 520 },
-  //     { id: 'YELLOW_3', color: 'yellow', position: -1, currentX: 520, currentY: 520 },
-
-  //     // GREEN top-right
-  //     { id: 'GREEN_0', color: 'green', position: -1, currentX: 400, currentY: 40 },
-  //     { id: 'GREEN_1', color: 'green', position: -1, currentX: 400, currentY: 160 },
-  //     { id: 'GREEN_2', color: 'green', position: -1, currentX: 520, currentY: 40 },
-  //     { id: 'GREEN_3', color: 'green', position: -1, currentX: 520, currentY: 160 },
-
-  //     // BLUE top-left
-  //     { id: 'BLUE_0', color: 'blue', position: -1, currentX: 40, currentY: 40 },
-  //     { id: 'BLUE_1', color: 'blue', position: -1, currentX: 40, currentY: 160 },
-  //     { id: 'BLUE_2', color: 'blue', position: -1, currentX: 160, currentY: 40 },
-  //     { id: 'BLUE_3', color: 'blue', position: -1, currentX: 160, currentY: 160 }
-
-  //   ];
-  // }
-
-  // rollDice() {
-  //   const diceValue = Math.floor(Math.random() * 6) + 1;
-  //   this.valueDice.set(diceValue);
-  // }
-
-  // updateAllPieces(serverPieces: { [key: string]: { position: number } }) {
-  //   this.pieces.forEach(piece => {
-  //     const serverPos = serverPieces[piece.id]?.position;
-  //     if (serverPos !== undefined) {
-  //       piece.position = serverPos;
-  //       this.updatePiecePosition(piece.id, serverPos);
-  //     }
-  //   });
-  // }
-
-  // getPathMap(color: string): { row: number; col: number }[] {
-  //   switch (color) {
-  //     case 'red': return this.PathArrayRED;
-  //     case 'green': return this.PathArrayGREEN;
-  //     case 'blue': return this.PathArrayBLUE;
-  //     case 'yellow': return this.PathArrayYELLOW;
-  //     default: return [];
-  //   }
-  // }
-
-
-  // updatePiecePosition(pieceId: string, position: number) {
-  //   const piece = this.pieces.find(p => p.id === pieceId);
-  //   if (!piece) return;
-
-  //   const path = this.getPathMap(piece.color);
-  //   if (path[position]) {
-  //     const { row, col } = path[position];
-  //     piece.currentX = (col - 1) * 40;
-  //     piece.currentY = (row - 1) * 40;
-  //   }
-  // }
-
-  // delay(ms: number) {
-  //   return new Promise(resolve => setTimeout(resolve, ms));
-  // }
-
-  // async selectPiece(pieceId: string) {
-  //   const piece = this.pieces.find(p => p.id === pieceId);
-  //   if (!piece) return;
-
-  //   const path = this.getPathMap(piece.color);
-  //   if (!path.length) return;
-  //   if (piece.position === -1) {
-  //     piece.position = 0;
-  //     this.updatePiecePosition(piece.id, piece.position);
-  //     return;
-  //   }
-  //   const newPos = piece.position + this.valueDice();
-  //   if (newPos >= path.length) return;
-  //   // piece.position = newPos;
-
-  //   let start = piece.position;
-
-  //   for (let step = start; step < newPos; step++) {
-  //     piece.position += 1;
-  //     this.updatePiecePosition(piece.id, piece.position);
-  //     await this.delay(350); // adjust speed here
-  //   }
-  //   // this.updatePiecePosition(piece.id, newPos);
-  // }
-
 
   isRedHome(index: number): boolean {
     const row = Math.floor(index / 15);

@@ -16,6 +16,8 @@ export class GameService {
     gameWon: null,
     movablePieces: []
   };
+
+  private isAnimating = false;
   private piecesSubject = new BehaviorSubject<IPiece[]>([]);
   pieces$ = this.piecesSubject.asObservable();
 
@@ -25,86 +27,95 @@ export class GameService {
   initPieces() {
     //for active player use loop for each color and push to pieces array
 
+    const newPieces: IPiece[] = [];
+    this.gameState.activePlayers.forEach(player =>  {
+      // const color = this.gameState.activePlayers[activePlayer];
+      if(player.includes('RED')) {
+       newPieces.push(
+          { id: 'RED_0', color: 'red', position: -1, currentX: 40, currentY: 400 },
+          // {id: 'RED_0', color:'red', position: -1, currentX: 40, currentY: 240},
+          { id: 'RED_1', color: 'red', position: -1, currentX: 40, currentY: 520 },
+          { id: 'RED_2', color: 'red', position: -1, currentX: 160, currentY: 400 },
+          { id: 'RED_3', color: 'red', position: -1, currentX: 160, currentY: 520 });
+      }
+      else if(player.includes('YELLOW')) {
+          newPieces.push(
+            { id: 'YELLOW_0', color: 'yellow', position: -1, currentX: 400, currentY: 400 },
+            { id: 'YELLOW_1', color: 'yellow', position: -1, currentX: 520, currentY: 400 },
+            { id: 'YELLOW_2', color: 'yellow', position: -1, currentX: 400, currentY: 520 },
+            { id: 'YELLOW_3', color: 'yellow', position: -1, currentX: 520, currentY: 520 },
+          )
+      }
+      else if(player.includes('GREEN')) {
+          newPieces.push(
+            { id: 'GREEN_0', color: 'green', position: -1, currentX: 400, currentY: 40 },
+          { id: 'GREEN_1', color: 'green', position: -1, currentX: 400, currentY: 160 },
+          { id: 'GREEN_2', color: 'green', position: -1, currentX: 520, currentY: 40 },
+          { id: 'GREEN_3', color: 'green', position: -1, currentX: 520, currentY: 160 },
+          )
+      }
+      else if(player.includes('BLUE')) {
+          newPieces.push(
+            { id: 'BLUE_0', color: 'blue', position: -1, currentX: 40, currentY: 40 },
+            { id: 'BLUE_1', color: 'blue', position: -1, currentX: 40, currentY: 160 },
+            { id: 'BLUE_2', color: 'blue', position: -1, currentX: 160, currentY: 40 },
+            { id: 'BLUE_3', color: 'blue', position: -1, currentX: 160, currentY: 160 }
+          )
+      }
+    });
+
+    this.piecesSubject.next(newPieces);
     
-    // this.gameState.activePlayers.forEach(player =>  {
-    //   // const color = this.gameState.activePlayers[activePlayer];
-    //   if(player.includes('RED')) {
-    //     this.pieces.push(
-    //       { id: 'RED_0', color: 'red', position: -1, currentX: 40, currentY: 400 },
-    //       // {id: 'RED_0', color:'red', position: -1, currentX: 40, currentY: 240},
-    //       { id: 'RED_1', color: 'red', position: -1, currentX: 40, currentY: 520 },
-    //       { id: 'RED_2', color: 'red', position: -1, currentX: 160, currentY: 400 },
-    //       { id: 'RED_3', color: 'red', position: -1, currentX: 160, currentY: 520 });
-    //   }
-    //   else if(player.includes('YELLOW')) {
-    //       this.pieces.push(
-    //         { id: 'YELLOW_0', color: 'yellow', position: -1, currentX: 400, currentY: 400 },
-    //         { id: 'YELLOW_1', color: 'yellow', position: -1, currentX: 520, currentY: 400 },
-    //         { id: 'YELLOW_2', color: 'yellow', position: -1, currentX: 400, currentY: 520 },
-    //         { id: 'YELLOW_3', color: 'yellow', position: -1, currentX: 520, currentY: 520 },
-    //       )
-    //   }
-    //   else if(player.includes('GREEN')) {
-    //       this.pieces.push(
-    //         { id: 'GREEN_0', color: 'green', position: -1, currentX: 400, currentY: 40 },
-    //       { id: 'GREEN_1', color: 'green', position: -1, currentX: 400, currentY: 160 },
-    //       { id: 'GREEN_2', color: 'green', position: -1, currentX: 520, currentY: 40 },
-    //       { id: 'GREEN_3', color: 'green', position: -1, currentX: 520, currentY: 160 },
-    //       )
-    //   }
-    //   else if(player.includes('BLUE')) {
-    //       this.pieces.push(
-    //         { id: 'BLUE_0', color: 'blue', position: -1, currentX: 40, currentY: 40 },
-    //         { id: 'BLUE_1', color: 'blue', position: -1, currentX: 40, currentY: 160 },
-    //         { id: 'BLUE_2', color: 'blue', position: -1, currentX: 160, currentY: 40 },
-    //         { id: 'BLUE_3', color: 'blue', position: -1, currentX: 160, currentY: 160 }
-    //       )
-    //   }
-    // });
+    // this.piecesSubject.next([
+    //   { id: 'RED_0', color: 'red', position: -1, currentX: 40, currentY: 400 },
+    //   // {id: 'RED_0', color:'red', position: -1, currentX: 40, currentY: 240},
+    //   { id: 'RED_1', color: 'red', position: -1, currentX: 40, currentY: 520 },
+    //   { id: 'RED_2', color: 'red', position: -1, currentX: 160, currentY: 400 },
+    //   { id: 'RED_3', color: 'red', position: -1, currentX: 160, currentY: 520 },
 
-    this.piecesSubject.next([
-      { id: 'RED_0', color: 'red', position: -1, currentX: 40, currentY: 400 },
-      // {id: 'RED_0', color:'red', position: -1, currentX: 40, currentY: 240},
-      { id: 'RED_1', color: 'red', position: -1, currentX: 40, currentY: 520 },
-      { id: 'RED_2', color: 'red', position: -1, currentX: 160, currentY: 400 },
-      { id: 'RED_3', color: 'red', position: -1, currentX: 160, currentY: 520 },
+    //   { id: 'YELLOW_0', color: 'yellow', position: -1, currentX: 400, currentY: 400 },
+    //   { id: 'YELLOW_1', color: 'yellow', position: -1, currentX: 520, currentY: 400 },
+    //   { id: 'YELLOW_2', color: 'yellow', position: -1, currentX: 400, currentY: 520 },
+    //   { id: 'YELLOW_3', color: 'yellow', position: -1, currentX: 520, currentY: 520 },
 
-      { id: 'YELLOW_0', color: 'yellow', position: -1, currentX: 400, currentY: 400 },
-      { id: 'YELLOW_1', color: 'yellow', position: -1, currentX: 520, currentY: 400 },
-      { id: 'YELLOW_2', color: 'yellow', position: -1, currentX: 400, currentY: 520 },
-      { id: 'YELLOW_3', color: 'yellow', position: -1, currentX: 520, currentY: 520 },
+    //   // GREEN top-right
+    //   { id: 'GREEN_0', color: 'green', position: -1, currentX: 400, currentY: 40 },
+    //   { id: 'GREEN_1', color: 'green', position: -1, currentX: 400, currentY: 160 },
+    //   { id: 'GREEN_2', color: 'green', position: -1, currentX: 520, currentY: 40 },
+    //   { id: 'GREEN_3', color: 'green', position: -1, currentX: 520, currentY: 160 },
 
-      // GREEN top-right
-      { id: 'GREEN_0', color: 'green', position: -1, currentX: 400, currentY: 40 },
-      { id: 'GREEN_1', color: 'green', position: -1, currentX: 400, currentY: 160 },
-      { id: 'GREEN_2', color: 'green', position: -1, currentX: 520, currentY: 40 },
-      { id: 'GREEN_3', color: 'green', position: -1, currentX: 520, currentY: 160 },
+    //   // BLUE top-left
+    //   { id: 'BLUE_0', color: 'blue', position: -1, currentX: 40, currentY: 40 },
+    //   { id: 'BLUE_1', color: 'blue', position: -1, currentX: 40, currentY: 160 },
+    //   { id: 'BLUE_2', color: 'blue', position: -1, currentX: 160, currentY: 40 },
+    //   { id: 'BLUE_3', color: 'blue', position: -1, currentX: 160, currentY: 160 }
 
-      // BLUE top-left
-      { id: 'BLUE_0', color: 'blue', position: -1, currentX: 40, currentY: 40 },
-      { id: 'BLUE_1', color: 'blue', position: -1, currentX: 40, currentY: 160 },
-      { id: 'BLUE_2', color: 'blue', position: -1, currentX: 160, currentY: 40 },
-      { id: 'BLUE_3', color: 'blue', position: -1, currentX: 160, currentY: 160 }
-
-    ]);
+    // ]);
   }
 
   // pieces: IPiece[] = [];
   constructor() {
-    this.initPieces();
+    // this.initPieces();
   }
 
   startGame(playerCount: number) {
     const configs = [
       { color: 'RED', active: playerCount >= 2 },
-      { color: 'GREEN', active: playerCount >= 2 },
       { color: 'BLUE', active: playerCount >= 3 },
+      { color: 'GREEN', active: playerCount >= 2 },
       { color: 'YELLOW', active: playerCount === 4 }
     ];
 
     console.log('Starting game with players:', configs.filter(p => p.active).map(p => p.color));
 
     this.gameState.activePlayers = configs.filter(p => p.active).map(p => p.color);
+
+    this.gameState.pieces = {};
+    this.gameState.activePlayers.forEach(color => {
+        for(let i=0;i< 4;i++){
+          this.gameState.pieces[`${ color}_${i}`] =-1;
+        }
+    });
 
     this.initPieces();
 
@@ -113,12 +124,6 @@ export class GameService {
     this.gameState.gameWon = null;
     this.gameState.movablePieces = [];
 
-    // Initialize all pieces
-    // Object.keys(this.gameState.pieces).forEach(pieceId => {
-      
-    //   const color = pieceId.split('_')[0];
-    //   this.gameState.pieces[pieceId] = this.gameState.activePlayers.includes(color) ? -1 : -999;
-    // });
     console.log('Initial game state:', this.gameState);
 
     // now update piece positions
@@ -133,8 +138,13 @@ export class GameService {
     const currentPlayer = this.gameState.activePlayers[this.gameState.currentTurn];
     this.gameState.movablePieces = this.calculateMovablePieces(currentPlayer, this.gameState.diceValue);
 
-    this.gameStateSubject.next({ ...this.gameState });
+    // this.gameStateSubject.next({ ...this.gameState });
     console.log('Rolled dice:', this.gameState.diceValue, 'Movable pieces for', currentPlayer, ':', this.gameState.movablePieces);
+    if(this.gameState.movablePieces.length === 0) {
+      console.log('No movable pieces');
+      this.gameState.diceValue=0;
+      this.gameState.currentTurn = (this.gameState.currentTurn+1) %this.gameState.activePlayers.length;
+    }
     return this.gameState.diceValue;
   }
 
@@ -150,41 +160,206 @@ export class GameService {
     return movable;
   }
 
-  movePiece(pieceId: string): boolean {
+  async movePiece(pieceId: string): Promise<boolean> {
     const color = pieceId.split('_')[0];
     const currentPlayer = this.gameState.activePlayers[this.gameState.currentTurn];
 
     if (currentPlayer !== color || !this.gameState.movablePieces.includes(pieceId)) {
+      console.log('Invalid move:', { currentPlayer, color, movablePieces: this.gameState.movablePieces });
       return false; // Invalid move
     }
 
+    this.isAnimating = true;
+    
     const oldPos = this.gameState.pieces[pieceId];
-    const newPos = oldPos === -1 ? 0 : oldPos + this.gameState.diceValue;
-    this.gameState.pieces[pieceId] = newPos;
-
-    // Collision check
-    this.checkCollisions(pieceId, newPos);
-    // Next turn (6 = extra turn)
-    if (this.gameState.diceValue !== 6) {
+    const gotSix = this.gameState.diceValue ===6;
+    
+    if (oldPos === -1) {
+      console.log(`${pieceId} home to start`);
+      this.gameState.pieces[pieceId] = 0;
+      this.syncUiPieces();
+      this.gameStateSubject.next({ ...this.gameState });
+      await this.delay(400);
+      
+      // Keep turn because rolled 6 to come out
+      // Don't change turn, player gets another roll
+      
+      // Reset for next roll
+      this.gameState.movablePieces = [];
+      this.gameState.diceValue = 0;
+      
+      this.gameStateSubject.next({ ...this.gameState });
+      this.isAnimating = false;
+      
+      return true;
+    }
+    
+    const startPos = oldPos;
+    const steps = this.gameState.diceValue;
+    
+    for (let step = 1; step <= steps; step++) {
+      const currentPos = startPos + step;
+      this.gameState.pieces[pieceId] = currentPos;
+      this.syncUiPieces();
+      this.gameStateSubject.next({ ...this.gameState });
+      
+      await this.delay(400);
+    }
+    
+    const finalPos = startPos + steps;
+    
+    const killedSomeone = await this.checkCollisionsByCoordinates(pieceId, color);
+    
+    if (!gotSix && !killedSomeone) {
       this.gameState.currentTurn = (this.gameState.currentTurn + 1) % this.gameState.activePlayers.length;
     }
 
+    // Reset 
     this.gameState.movablePieces = [];
+    this.gameState.diceValue = 0;
+    
     this.checkWin();
-    // this.updatePiecePositions();
-    this.syncUiPieces();
+    this.gameStateSubject.next({ ...this.gameState });
+    
+    this.isAnimating = false;
+    
+    console.log('Piece moved:', pieceId, 'from', oldPos, 'to', finalPos, 'Next turn:', this.gameState.activePlayers[this.gameState.currentTurn]);
     return true;
   }
 
-  private checkCollisions(movingPieceId: string, newPos: number) {
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+   private async checkCollisionsByCoordinates(movingPieceId: string, movingColor: string): Promise<boolean> {
+    const movingPiece = this.pieces.find(p => p.id === movingPieceId);
+    if (!movingPiece) return false;
+    
+    const movingPos = this.gameState.pieces[movingPieceId];
+    
+    if (movingPos === -1 || movingPos >= 52) {
+      console.log(`Position ${movingPos} is home or finish area - no killing`);
+      return false;
+    }
+    
+    // Get actual grid coordinates for the moving piece
+    const movingPath = this.getPathMap(movingColor.toLowerCase());
+    const movingCell = movingPath[movingPos];
+    
+    if (!movingCell) {
+      console.log(`No cell found for ${movingPieceId} at position ${movingPos}`);
+      return false;
+    }
+    
+    const safeCells = [
+      { row: 14, col: 7 },  
+      { row: 2, col: 9 },   
+      { row: 7, col: 2 },   
+      { row: 9, col: 14 }, 
+      { row: 9, col: 6 },   
+      { row: 7, col: 10 },  
+      { row: 6, col: 7 },   
+      { row: 10, col: 9 }   
+    ];
+    
+    const isSafe = safeCells.some(safe => safe.row === movingCell.row && safe.col === movingCell.col);
+    if (isSafe) {
+      console.log(`Cell (${movingCell.row}, ${movingCell.col}) is a safe zone - no killing allowed`);
+      return false;
+    }
+
+    let killedSomeone = false;
+    
+    for (const pieceId of Object.keys(this.gameState.pieces)) {
+      if (pieceId === movingPieceId) continue;
+      
+      const opponentPos = this.gameState.pieces[pieceId];
+      if (opponentPos === -1 || opponentPos >= 52) continue; 
+      const opponentColor = pieceId.split('_')[0];
+      if (!this.gameState.activePlayers.includes(opponentColor)) continue;
+      
+      // Get opponent's actual grid coordinates
+      const opponentPath = this.getPathMap(opponentColor.toLowerCase());
+      const opponentCell = opponentPath[opponentPos];
+      
+      if (!opponentCell) continue;
+      
+      // Compare actual grid coordinates (row, col)
+      if (opponentCell.row === movingCell.row && opponentCell.col === movingCell.col) {
+        console.log(`Found ${pieceId} at same grid cell (${opponentCell.row}, ${opponentCell.col})`);
+        
+        // Can only kill opponents, not same color pieces
+        if (opponentColor !== movingColor) {
+          console.log(`KILL: ${movingPieceId} killed ${pieceId} at grid (${movingCell.row}, ${movingCell.col})`);
+          
+          // Animate the killed piece going back home through its path in reverse
+          await this.sendPieceHome(pieceId);
+          killedSomeone = true;
+        } else {
+          console.log(`Same color (${movingColor}) - no killing`);
+        }
+      }
+    }
+    
+    return killedSomeone;
+  }
+
+  private async sendPieceHome(pieceId: string): Promise<void> {
+    const piece = this.pieces.find(p => p.id === pieceId);
+    if (!piece) return;
+    
+    const currentPos = this.gameState.pieces[pieceId];
+    if (currentPos < 0) {
+      this.gameState.pieces[pieceId] = -1;
+      this.syncUiPieces();
+      return;
+    }
+    
+    for (let pos = currentPos - 1; pos >= 0; pos--) {
+      this.gameState.pieces[pieceId] = pos;
+      this.syncUiPieces();
+      this.gameStateSubject.next({ ...this.gameState });
+      await this.delay(200); 
+    }
+    
+    this.gameState.pieces[pieceId] = -1;
+    this.syncUiPieces();
+    this.gameStateSubject.next({ ...this.gameState });
+  }
+
+  private checkCollisions(movingPieceId: string, newPos: number, movingColor: string): boolean {
+    // Safe zone positions (star positions) - can't kill here
+    const safePositions = [0, 8, 13, 21, 26, 34, 39, 47];
+    
+    console.log(`Checking collisions for ${movingPieceId} at position ${newPos}`);
+    
+    if (safePositions.includes(newPos)) {
+      console.log(`Position ${newPos} is a safe zone - no killing allowed`);
+      return false;
+    }
+    
+    if (newPos === -1 || newPos >= 58) {
+      console.log(`Position ${newPos} is home or finish area - no killing`);
+      return false; // No killing in home or finish area
+    }
+
+    let killedSomeone = false;
     Object.keys(this.gameState.pieces).forEach(pieceId => {
       if (pieceId !== movingPieceId && this.gameState.pieces[pieceId] === newPos) {
         const opponentColor = pieceId.split('_')[0];
-        if (this.gameState.activePlayers.includes(opponentColor)) {
+        console.log(`Found ${pieceId} (${opponentColor}) at same position ${newPos}`);
+        
+        // Can only kill opponents, not same color pieces
+        if (opponentColor !== movingColor && this.gameState.activePlayers.includes(opponentColor)) {
+          console.log(`✅ KILL: ${movingPieceId} killed ${pieceId} at position ${newPos}`);
           this.gameState.pieces[pieceId] = -1;
+          killedSomeone = true;
+        } else if (opponentColor === movingColor) {
+          console.log(`Same color (${movingColor}) - no killing`);
         }
       }
     });
+    return killedSomeone;
   }
 
   private checkWin() {
@@ -235,6 +410,7 @@ export class GameService {
       const { row, col } = path[position];
       piece.currentX = (col - 1) * 40;
       piece.currentY = (row - 1) * 40;
+      piece.position = position;
     }
   }
 
@@ -247,12 +423,58 @@ export class GameService {
   }
 
   private syncUiPieces() {
-    const updated = this.piecesSubject.value.map(p => ({
-      ...p,
-      position: this.gameState.pieces[p.id]
-    }));
+    this.pieces = this.piecesSubject.value;
+    const updated = this.pieces.map(p => {
+      const newPiece = { ...p };
+      const pos = this.gameState.pieces[p.id];
+      newPiece.position = pos;
+      
+      if (pos === -1) {
+        this.resetToHome(newPiece);
+      } else if (pos >= 0) {
+        // Update based on path
+        const path = this.getPathMap(newPiece.color);
+        if (path[pos]) {
+          const { row, col } = path[pos];
+          newPiece.currentX = (col -1) * 40;
+          newPiece.currentY = (row -1) *40;
+        }
+      }
+      return newPiece;
+    });
 
+    this.pieces = updated;
     this.piecesSubject.next(updated);
+  }
+
+  private resetToHome(piece: IPiece) {
+    const homePositions: { [key: string]: { x: number; y: number }[] } = {
+      'RED': [
+        { x: 40, y:400 }, { x: 40, y:520 },
+        { x: 160, y:400 }, { x: 160,y: 520 }
+      ],
+      'YELLOW': [
+        { x: 400,y:400 }, { x: 520, y: 400 },
+        { x: 400,y: 520 }, { x: 520, y: 520 }
+      ],
+      'GREEN': [
+        { x: 400,y: 40 }, { x: 400, y: 160 },
+        { x: 520,y: 40 }, { x:520, y: 160 }
+      ],
+      'BLUE': [
+        { x: 40, y:40 }, { x: 40, y: 160 },
+        { x: 160,y: 40 }, { x:160, y:160 }
+      ]
+    };
+    
+    const color = piece.id.split('_')[0];
+    const index = parseInt(piece.id.split('_')[1]);
+    const pos = homePositions[color]?.[index];
+    
+    if (pos) {
+      piece.currentX = pos.x;
+      piece.currentY = pos.y;
+    }
   }
 
 
