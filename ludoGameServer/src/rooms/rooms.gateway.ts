@@ -14,10 +14,19 @@ interface GameRoom {
 @WebSocketGateway( {
   cors: {
     origin: 'http://localhost:4200',
+    // origin: '*',
     methods: ['GET', 'POST'],
   },
-  transports: ['websocket'],
+  // transports: ['websocket'],
 })
+
+// @WebSocketGateway({
+//   path: '/socket.io',
+//   cors: {
+//     origin: '*',
+//   },
+//   transports: ['polling', 'websocket'],
+// })
 export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
 
@@ -30,42 +39,76 @@ export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleConnection(client: Socket) {
     console.log('New user Connected:', client.id);
-    this.server.emit('user-joined', {
-      Message: `New user Joined: ${client.id}`,
-      socketId: client.id
+    client.emit('connected', {
+      socketId: client.id,
+      message: 'Connected successfully'
     });
   }
 
   handleDisconnect(client: Socket) {
-    console.log('User Disconnected:', client.id);
+  console.log(' User disconnected:', client.id);
 
-    // Remove player from their room
-    const roomId = this.playerRooms.get(client.id);
-    if (roomId) {
-      const room = this.rooms.get(roomId);
-      if (room) {
-        room.players = room.players.filter(p => p.socketId !== client.id);
-        room.currentPlayers--;
+  const roomId = this.playerRooms.get(client.id);
+  if (!roomId) return;
 
-        if (room.currentPlayers === 0) {
-          this.rooms.delete(roomId);
-        } else {
-          this.server.to(roomId).emit('player-left', {
-            roomId,
-            room,
-            message: `Player ${client.id} left the room`,
-            socketId: client.id
-          });
-        }
-      }
-      this.playerRooms.delete(client.id);
+  const room = this.rooms.get(roomId);
+  if (!room) {
+    this.playerRooms.delete(client.id);
+    return;
+  }
+
+  room.players = room.players.filter(p => p.socketId !== client.id);
+  room.currentPlayers = Math.max(0, room.currentPlayers - 1);
+
+  if (room.currentPlayers === 0) {
+    this.rooms.delete(roomId);
+    this.roomColorIndex.delete(roomId);
+  } else {
+    if (room.hostSocketId === client.id) {
+      room.hostSocketId = room.players[0]?.socketId;
     }
 
-    this.server.emit('user-left', {
-      Message: `User left: ${client.id}`,
-      socketId: client.id
+    this.server.to(roomId).emit('player-left', {
+      roomId,
+      room,
+      socketId: client.id,
     });
   }
+
+  this.playerRooms.delete(client.id);
+}
+
+
+  // handleDisconnect(client: Socket) {
+  //   console.log('User Disconnected:', client.id);
+
+  //   // Remove player from their room
+  //   const roomId = this.playerRooms.get(client.id);
+  //   if (roomId) {
+  //     const room = this.rooms.get(roomId);
+  //     if (room) {
+  //       room.players = room.players.filter(p => p.socketId !== client.id);
+  //       room.currentPlayers--;
+
+  //       if (room.currentPlayers === 0) {
+  //         this.rooms.delete(roomId);
+  //       } else {
+  //         this.server.to(roomId).emit('player-left', {
+  //           roomId,
+  //           room,
+  //           message: `Player ${client.id} left the room`,
+  //           socketId: client.id
+  //         });
+  //       }
+  //     }
+  //     this.playerRooms.delete(client.id);
+  //   }
+
+  //   this.server.emit('user-left', {
+  //     Message: `User left: ${client.id}`,
+  //     socketId: client.id
+  //   });
+  // }
 
   @SubscribeMessage('create-room')
   handleCreateRoom(

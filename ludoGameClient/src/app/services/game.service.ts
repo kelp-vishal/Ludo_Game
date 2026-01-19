@@ -434,17 +434,75 @@ export class GameService {
     return killedSomeone;
   }
 
-  applyRemoteGameState(remoteState: any): void {
+  async applyRemoteGameState(remoteState: any): Promise<void>{
     if (!remoteState) return;
     
-    this.gameState.currentTurn = remoteState.currentTurn;
-    this.gameState.diceValue = remoteState.diceValue;
-    this.gameState.pieces = { ...remoteState.pieces };
-    this.gameState.movablePieces = remoteState.movablePieces||[];
+    // this.gameState.currentTurn = remoteState.currentTurn;
+    // this.gameState.diceValue = remoteState.diceValue;
+    // this.gameState.pieces = { ...remoteState.pieces };
+    // this.gameState.movablePieces = remoteState.movablePieces||[];
     
     // Sync UI pieces
-    this.syncUiPieces();
-    this.gameStateSubject.next({ ...this.gameState });
+    // this.syncUiPieces();
+    // this.gameStateSubject.next({ ...this.gameState });
+
+    if (remoteState.lastMove && remoteState.lastMove.pieceId) {
+      // Only animate, don't update other state yet
+      await this.animateRemoteMove(remoteState.lastMove);
+      
+      const { pieceId, toPos } =remoteState.lastMove;
+      this.gameState.pieces[pieceId] = toPos;
+      
+      this.syncUiPieces();
+      this.gameStateSubject.next({ ...this.gameState });
+    } else {
+      // Full state update (no animation)
+      this.gameState.currentTurn = remoteState.currentTurn;
+      this.gameState.diceValue = remoteState.diceValue;
+      this.gameState.pieces = { ...remoteState.pieces };
+      this.gameState.movablePieces = remoteState.movablePieces || [];
+      
+      this.syncUiPieces();
+      this.gameStateSubject.next({ ...this.gameState });
+    }
+  }
+
+  private async animateRemoteMove(moveInfo: { pieceId: string; fromPos: number; toPos:number }): Promise<void> {
+    const { pieceId, fromPos, toPos } = moveInfo;
+    
+    // Handle coming out of home
+    if (fromPos === -1 && toPos === 0) {
+      this.gameState.pieces[pieceId] = 0;
+      this.syncUiPieces();
+      this.gameStateSubject.next({ ...this.gameState });
+      await this.delay(400);
+      return;
+    }
+    
+    // Handle being sent back home
+    if (toPos === -1 && fromPos >= 0) {
+      // Animate backwards to home
+      for (let pos = fromPos - 1; pos >= 0; pos--) {
+        this.gameState.pieces[pieceId] = pos;
+        this.syncUiPieces();
+        this.gameStateSubject.next({ ...this.gameState });
+        await this.delay(50);
+      }
+      this.gameState.pieces[pieceId] = -1;
+      this.syncUiPieces();
+      this.gameStateSubject.next({ ...this.gameState });
+      return;
+    }
+    
+    // Animate normal movement step by step
+    if (fromPos >= 0 && toPos > fromPos) {
+      for (let step = fromPos + 1; step <= toPos; step++) {
+        this.gameState.pieces[pieceId] = step;
+        this.syncUiPieces();
+        this.gameStateSubject.next({ ...this.gameState });
+        await this.delay(400);
+      }
+    }
   }
 
   getMyColor(): string {

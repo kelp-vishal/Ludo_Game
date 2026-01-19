@@ -81,7 +81,7 @@
   height: min(32px, 6vw);
   position: absolute;
   cursor: pointer;
-  transition: left 0.35s ease-in-out, top 0.35s ease-in-out, transform 0.2s ease;
+  transition: left 0.35s ease-in-out, top 0.35s ease-in-out, transform 0.2s ease,opacity 0.2s ease;
   z-index: 10;
   display: inline-block;
 }
@@ -137,7 +137,7 @@
 }
 
 .piece:hover {
-  transform: scale(1.1);
+  /* transform: scale(1.1); */
 }
 
 /* Color variants using CSS variables */
@@ -149,9 +149,10 @@
 
 
 .piece.movable {
-  transform: scale(1.2);
+  /* transform: scale(1.2); */
   /* box-shadow: 0 0 10px 8px gold, 0 0 30px 12px rgba(255, 215, 0, 0.4); */
-  animation: pulse 0.8s ease-in-out infinite;
+  /* animation: pulse 0.8s ease-in-out infinite; */
+  animation: blink 0.7s ease-in-out infinite;
   cursor: pointer;
   z-index: 20;
 }
@@ -161,14 +162,14 @@
   /* transform: scale(1.2); */
 }
 
-@keyframes pulse {
+@keyframes blink {
   0%, 100% { 
-    transform: scale(1.2); 
-    /* box-shadow: 0 0 15px 10px rgb(150, 238, 233), 0 0 10px 16px rgba(37, 223, 207, 0.4); */
+    opacity:1;
+    transform: scale(1.15); 
   }
   50% { 
-    transform: scale(1.4); 
-    /* box-shadow: 0 0 15px 10px rgb(241, 228, 151), 0 0 20px 16px rgba(248, 225, 99, 0.6); */
+    opacity: 0.7;
+    transform: scale(1.1);  
   }
 }
 
@@ -317,24 +318,25 @@
 /* Bouncing animation for piece movement like real Ludo */
 @keyframes hop {
   0% { 
-    transform: translateY(0) scale(1); 
+    transform: translateY(0) scale(1.2); 
   }
   25% { 
-    transform: translateY(-15px) scale(1.1); 
+    transform: translateY(0px) scale(1.2); 
   }
   50% { 
-    transform: translateY(0) scale(1); 
+    transform: translateY(0) scale(1.2); 
   }
   75% { 
-    transform: translateY(-8px) scale(1.05); 
+    transform: translateY(-4px) scale(1.2); 
   }
   100% { 
-    transform: translateY(0) scale(1); 
+    transform: translateY(0) scale(1.2); 
   }
 }
 
 .piece.moving {
-  animation: hop 0.4s ease-in-out;
+  /* animation: hop 0.4s ease-in-out; */
+  transition: scale(1.2);
   z-index: 100;
 }
 
@@ -345,6 +347,7 @@
   font-weight: 600;
   /* color: var(--text-dark); */
   color:#000;
+  text-shadow: 2px 2px 5px rgb(180, 180, 180);
   text-align: center;
 }
 
@@ -505,17 +508,16 @@
 
 
 .Red-Turn{
-  /* border-radius: 5px solid red; */
-  background-color: rgb(126, 0, 0);
-  /* background-image: linear-gradient(120 deg ,red,blue); */
+  background-color: rgb(122, 0, 0);
+  /* animation: redGlow 1.5s ease-in-out infinite duration timing-function delay iteration-count direction fill-mode; */
 
 }
 .Blue-Turn{
-  background-color: #0049be;
+  background-color: #003995;
 }
 .Yellow-Turn{
-  background-color: rgb(166, 166, 0);
+  background-color: rgb(136, 136, 1);
 }
 .Green-Turn{
-  background-color: #008638;
+  background-color: #017a33;
 }

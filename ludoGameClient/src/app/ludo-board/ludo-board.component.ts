@@ -87,15 +87,25 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
-  syncGameStateWithOthers(): void {
+  syncGameStateWithOthers(lastMovedPieceId?: string,fromPos?:number ,toPos?:number): void {
     if (this.gameState) {
-      this.socketService.sendGameStateUpdate({
+      const updateData : any={
         currentTurn: this.gameState.currentTurn,
         diceValue: this.gameState.diceValue,
         pieces: this.gameState.pieces,
         movablePieces: this.gameState.movablePieces,
         timestamp: new Date()
-      });
+      };
+
+      if(lastMovedPieceId !== undefined && fromPos !== undefined && toPos !== undefined){
+        updateData.lastMove={
+          pieceId:lastMovedPieceId,
+          fromPos:fromPos,
+          toPos:toPos
+        };
+      }
+
+      this.socketService.sendGameStateUpdate(updateData);
     }
   }
 
@@ -133,8 +143,7 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
             }
           // }, 1000);
         } else {
-          // Normal case
-          this.syncGameStateWithOthers();
+          // Normal cas
           
           // Auto-move if -one piece only
           if (this.gameState?.movablePieces?.length === 1) {
@@ -158,9 +167,24 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
       return;
     }
 
+    
+    const oldPos = this.gameState?.pieces[pieceId] ??-1;
+    
+    // Calculate new position before animating
+    const diceValue = this.gameState?.diceValue?? 0;
+    let newPos = oldPos;
+    if (oldPos ===-1 && diceValue === 6) {
+      newPos = 0;
+    } else if (oldPos>= 0) {
+      newPos = oldPos + diceValue;
+    }
+    
+    // Sync IMMEDIATELY with othr players
+    this.syncGameStateWithOthers(pieceId, oldPos, newPos);
+
+
     const moved = await this.gameService.movePiece(pieceId);
     if (moved === true) {
-      // Piece moved successfully
       console.log('Piece moved:', pieceId);
 
       //Sync
