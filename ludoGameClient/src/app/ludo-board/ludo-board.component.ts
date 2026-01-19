@@ -119,6 +119,18 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
     });
   }
 
+  getCurrentPlayerName():string{
+    const currentColor = this.gameService.getCurrentPlayer();
+    const currentRoom = this.roomService.getCurrentRoom();
+
+    if(!currentRoom || !currentColor){
+      return currentColor || 'Player';
+    }
+
+    const player = currentRoom.players.find(p=> p.color=== currentColor);
+    return player?.playerName || currentColor;
+  }
+
 
   rollDice() {
     console.log(this.gameState);
@@ -179,8 +191,8 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
       newPos = oldPos + diceValue;
     }
     
-    // Sync IMMEDIATELY with othr players
-    this.syncGameStateWithOthers(pieceId, oldPos, newPos);
+    // Sync with othr players
+    this.syncGameStateWithOthers(pieceId,oldPos,newPos);
 
 
     const moved = await this.gameService.movePiece(pieceId);

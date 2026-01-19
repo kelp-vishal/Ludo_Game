@@ -145,3 +145,27 @@ hr {
   background-color: transparent;
   color: #869999;
 }
+
+.control-success {
+  color: #4caf50;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.form-info {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: #9bafaf;
+  font-size: 0.9rem;
+}
+
+.form-info a {
+  color: #147b73;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.form-info a:hover {
+  color: #319890;
+  text-decoration: underline;
+}

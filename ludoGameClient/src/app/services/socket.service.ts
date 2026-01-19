@@ -49,16 +49,7 @@ export class SocketService {
     //   reconnectionAttempts: 5,
     // });
     
-    this.socket = io('http://localhost:3000', {
-      path: '/socket.io',
-        transports: ['polling','websocket'],
-        reconnection: true,
-        reconnectionDelay: 1000,
-        reconnectionDelayMax: 5000,
-        reconnectionAttempts: 5,
-    });
-
-    // this.socket = io('https://f1vbcpxc-3000.inc1.devtunnels.ms/', {
+    // this.socket = io('http://localhost:3000', {
     //   path: '/socket.io',
     //     transports: ['polling','websocket'],
     //     reconnection: true,
@@ -66,6 +57,15 @@ export class SocketService {
     //     reconnectionDelayMax: 5000,
     //     reconnectionAttempts: 5,
     // });
+
+    this.socket = io('https://f1vbcpxc-3000.inc1.devtunnels.ms/', {
+      path: '/socket.io',
+        transports: ['polling','websocket'],
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        reconnectionAttempts: 5,
+    });
 
 
 

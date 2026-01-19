@@ -1,10 +1,11 @@
-<form [formGroup] ="form" (ngSubmit)="OnSubmit()">
+
+<form [formGroup]="form" (ngSubmit)="OnSubmit()">
   <h2>Login</h2>
 
   <div class="control-row">
     <div class="control no-margin">
-      <label for="email">Email</label>
-      <input id="email" type="email" [formControl] = 'form.controls.email'/>
+      <label for="username">Username</label>
+      <input id="username" type="text" formControlName="username"/>
     </div>
 
     <div class="control no-margin">
@@ -12,13 +13,24 @@
       <input id="password" type="password" formControlName="password"/>
     </div>
 
-    <button class="button">Login</button>
+    <button class="button" type="submit" [disabled]="isLoading">
+      {{ isLoading ? 'Logging in...' : 'Login' }}
+    </button>
   </div>
-  @if(emailInvalid){
-    <p class="control-error">Please enter the valid Email</p>
+  
+  @if(usernameInvalid){
+    <p class="control-error">Please enter a valid username (min 3 characters)</p>
   }
 
   @if(passwordInvalid){
-    <p class="control-error">Please enter the valid password</p>
+    <p class="control-error">Please enter a valid password (min 6 characters)</p>
   }
+
+  @if(errorMessage){
+    <p class="control-error">{{ errorMessage }}</p>
+  }
+  
+  <p class="form-info">
+    Don't have an account? <a routerLink="/signup">Sign up here</a>
+  </p>
 </form>
