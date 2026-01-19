@@ -175,29 +175,48 @@ export class GameService {
 
   }
 
-  rollDice(): number {
-    // this.gameState.diceValue = Math.floor(Math.random() * 6) + 1;
-    const currentPlayer = this.gameState.activePlayers[this.gameState.currentTurn];
+  // rollDice(): number {
+  //   // this.gameState.diceValue = Math.floor(Math.random() * 6) + 1;
+  //   const currentPlayer = this.gameState.activePlayers[this.gameState.currentTurn];
 
-    if(currentPlayer !== this.myColor){
+  //   if(currentPlayer !== this.myColor){
+  //     return this.gameState.diceValue;
+  //   }
+  //   this.gameState.diceValue= Math.floor(Math.random() *6)+1;
+  //   this.gameState.movablePieces = this.calculateMovablePieces(currentPlayer, this.gameState.diceValue);
+
+  //   // this.gameStateSubject.next({ ...this.gameState });
+  //   console.log('Rolled dice:', this.gameState.diceValue, 'Movable pieces for', currentPlayer, ':', this.gameState.movablePieces);
+  //   if(this.gameState.movablePieces.length === 0) {
+      
+  //     this.gameState.diceValue=0;
+  //     this.gameState.currentTurn =(this.gameState.currentTurn+1) %this.gameState.activePlayers.length;
+  //   }
+  //   else if(this.gameState.movablePieces.length === 1){
+  //     this.movePiece(this.gameState.movablePieces[0]);
+  //     // this.gameStateSubject.next({...this.gameState})
+  //   }
+
+  //   this.gameStateSubject.next({...this.gameState})
+  //   return this.gameState.diceValue;
+  // }
+
+  rollDice(): number {
+    const currentPlayer = this.gameState.activePlayers[this.gameState.currentTurn];
+    if (currentPlayer !== this.myColor) {
+      console.log('Not your turn');
       return this.gameState.diceValue;
     }
-    this.gameState.diceValue= Math.floor(Math.random() *6)+1;
+    
+    const diceRoll = Math.floor(Math.random()*6) +1;
+    this.gameState.diceValue = diceRoll;
     this.gameState.movablePieces = this.calculateMovablePieces(currentPlayer, this.gameState.diceValue);
-
-    // this.gameStateSubject.next({ ...this.gameState });
-    console.log('Rolled dice:', this.gameState.diceValue, 'Movable pieces for', currentPlayer, ':', this.gameState.movablePieces);
+              
     if(this.gameState.movablePieces.length === 0) {
-      
-      this.gameState.diceValue=0;
-      this.gameState.currentTurn =(this.gameState.currentTurn+1) %this.gameState.activePlayers.length;
+      console.log('No movable pieces - turn will pass after delay');
     }
-    else if(this.gameState.movablePieces.length === 1){
-      this.movePiece(this.gameState.movablePieces[0]);
-      this.gameStateSubject.next({...this.gameState})
-    }
-
-    this.gameStateSubject.next({...this.gameState})
+    
+    this.gameStateSubject.next({ ...this.gameState });
     return this.gameState.diceValue;
   }
 
@@ -219,7 +238,7 @@ export class GameService {
 
     if (currentPlayer !== color || !this.gameState.movablePieces.includes(pieceId)) {
       console.log('Invalid move:', { currentPlayer, color,movablePieces: this.gameState.movablePieces });
-      return false; // Invalid move
+      return false; // Invalid 
     }
 
     this.isAnimating = true;
@@ -228,8 +247,7 @@ export class GameService {
     const gotSix = this.gameState.diceValue ===6;
     
     if (oldPos === -1) {
-      console.log(`${pieceId} home to start`);
-      this.gameState.pieces[pieceId] = 0;
+      this.gameState.pieces[pieceId] =0;
       this.syncUiPieces();
       this.gameStateSubject.next({ ...this.gameState });
       await this.delay(400);
@@ -250,7 +268,7 @@ export class GameService {
     const startPos = oldPos;
     const steps = this.gameState.diceValue;
     
-    for (let step = 1; step <= steps; step++) {
+    for (let step = 1; step <= steps;step++) {
       const currentPos = startPos + step;
       this.gameState.pieces[pieceId] = currentPos;
       this.syncUiPieces();
@@ -282,6 +300,13 @@ export class GameService {
 
   private delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  updateGameState(newState: IGameState): void {
+    console.log("Update GameState. to next");
+    this.gameState ={ ...newState};
+    this.gameStateSubject.next({ ...this.gameState });
+    
   }
 
    private async checkCollisionsByCoordinates(movingPieceId: string,movingColor: string): Promise<boolean> {
@@ -383,12 +408,10 @@ export class GameService {
     console.log(`Checking collisions for ${movingPieceId} at position ${newPos}`);
     
     if (safePositions.includes(newPos)) {
-      console.log(`Position ${newPos} is a safe zone - no killing allowed`);
       return false;
     }
     
     if (newPos === -1 || newPos >= 58) {
-      console.log(`Position ${newPos} is home or finish area - no killing`);
       return false; // No killing in home or finish area
     }
 
@@ -543,6 +566,7 @@ export class GameService {
       piece.currentY = pos.y;
     }
   }
+
 
 
   PathArrayRED = [

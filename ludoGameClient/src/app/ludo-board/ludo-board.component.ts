@@ -60,6 +60,8 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
 
+  isRolling = false;
+
   ngOnInit() {
     // Subscribe to gameState changes
     const gameStateSubscription = this.gameService.gameState$.subscribe(state => {
@@ -107,14 +109,46 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
     });
   }
 
+
   rollDice() {
     console.log(this.gameState);
-    if (!this.gameState?.gameWon) {
-      this.gameService.rollDice();
+    if (!this.gameState?.gameWon && this.isMyTurn()) {
+      this.isRolling = true;
+      const rolledValue = this.gameService.rollDice();
+      this.syncGameStateWithOthers();
+      
+      setTimeout(() => {
+        this.isRolling = false;
+        
+        // Check if  no movable pieces
+        if (this.gameState?.movablePieces?.length === 0) {
+    
+          // setTimeout(() => {
+            console.log("GameStateUpdate in ludo-board.ts")
+            if (this.gameState) {
+              this.gameState.diceValue = 0;
+              this.gameState.currentTurn = (this.gameState.currentTurn+1) % this.gameState.activePlayers.length;
+              this.gameService.updateGameState(this.gameState);
+              this.syncGameStateWithOthers();
+            }
+          // }, 1000);
+        } else {
+          // Normal case
+          this.syncGameStateWithOthers();
+          
+          // Auto-move if -one piece only
+          if (this.gameState?.movablePieces?.length === 1) {
+            const pieceId = this.gameState.movablePieces[0];
 
-      setTimeout(() => this.syncGameStateWithOthers(),100);
+            setTimeout(() => {
+              this.selectPiece(pieceId);
+            }, 300);
+          }
+        }
+      }, 800);
     }
   }
+
 
   async selectPiece(pieceId: string) {
     const myColor = this.gameService.getMyColor();
@@ -167,6 +201,26 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
     };
   }
 
+  IsRedTurn(){
+    return this.getCurrentPlayer().toLowerCase() === 'RED'.toLowerCase();
+   
+  }
+  IsBlueTurn(){
+    return this.getCurrentPlayer().toLowerCase() === 'BLUE'.toLowerCase();
+
+    
+  }
+  IsYellowTurn(){
+    return this.getCurrentPlayer().toLowerCase() === 'YELLOW'.toLowerCase();
+
+   
+  }
+  IsGreenTurn(){
+    return this.getCurrentPlayer().toLowerCase() === 'GREEN'.toLowerCase();
+
+    // return this.gameService.isRedTurn();
+  }
+
   getVisiblePieces() {
     return this.gameService.getVisiblePieces();
   }
@@ -179,6 +233,12 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
   isGameWon() {
     return this.gameService.gameState.gameWon;
 
+  }
+
+   isMyTurn(): boolean {
+    const currentPlayer =this.gameService.getCurrentPlayer();
+    const myColor = this.gameService.getMyColor();
+    return currentPlayer === myColor;
   }
 
   isMyPiece(piece:any):boolean{

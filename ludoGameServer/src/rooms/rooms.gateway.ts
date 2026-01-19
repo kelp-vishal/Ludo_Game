@@ -11,11 +11,12 @@ interface GameRoom {
   createdAt: Date;
 }
 
-@WebSocketGateway(3002, {
+@WebSocketGateway( {
   cors: {
-    origin: "*",
+    origin: 'http://localhost:4200',
     methods: ['GET', 'POST'],
   },
+  transports: ['websocket'],
 })
 export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;

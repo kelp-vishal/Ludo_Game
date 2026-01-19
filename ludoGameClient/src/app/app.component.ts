@@ -1,16 +1,26 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { LudoBoardComponent } from './ludo-board/ludo-board.component';
 import { HeaderComponent } from './components/header/header.component';
-import { GameSetupComponent } from './game-setup/game-setup.component';
+import { NgIf } from '@angular/common';
+import { Router, NavigationEnd } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  
-  imports: [RouterOutlet,HeaderComponent],
+  standalone: true, 
+  imports: [RouterOutlet, HeaderComponent, NgIf], 
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = signal('ludoGameClient');
+  showHeader =false;
+
+  constructor(private router: Router) {
+
+    this.router.events.subscribe(event =>{
+      if (event instanceof NavigationEnd) {
+        const path = event.urlAfterRedirects.split('?')[0].split('#')[0];
+        this.showHeader = path !== '/ludo-board';
+      }
+    });
+  }
 }

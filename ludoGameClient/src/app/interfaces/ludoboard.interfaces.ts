@@ -22,3 +22,11 @@ export interface IGameState {
   gameWon: string | null;
   movablePieces: string[];
 }
+
+export interface IAvailableRoom {
+  roomId: string;
+  players: Array<{socketId:string; color?:string;playerName?: string }>;
+  maxPlayers: number;
+  currentPlayers: number;
+  gameStarted: boolean;
+}

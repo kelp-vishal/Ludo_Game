@@ -41,12 +41,23 @@ export class SocketService {
       return;
     }
 
+    // this.socket = io('http://192.168.0.115:3002', {
+    //   transports: ['websocket'],
+    //   reconnection: true,
+    //   reconnectionDelay: 1000,
+    //   reconnectionDelayMax: 5000,
+    //   reconnectionAttempts: 5,
+    // });
+    
     this.socket = io('http://localhost:3002', {
-      reconnection: true,
-      reconnectionDelay: 1000,
-      reconnectionDelayMax: 5000,
-      reconnectionAttempts: 5
+        transports: ['websocket'],
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        reconnectionAttempts: 5,
     });
+    
+
 
     this.socket.on('connect', () => {
       console.log('Connected to WebSocket server');

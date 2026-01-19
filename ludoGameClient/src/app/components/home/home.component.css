@@ -30,8 +30,10 @@
 }
 
 .ludo-image {
-    width: 500px;
-    height: 500px;
+    width: 50vw;
+    /* height: 500px; */
+    height:auto;
+    max-width: 500px;
     /* flex-shrink: 0; */
 }
 

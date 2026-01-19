@@ -7,14 +7,15 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { IAvailableRoom } from '../interfaces/ludoboard.interfaces';
 
-interface AvailableRoom {
-  roomId: string;
-  players: Array<{ socketId: string; color?: string; playerName?: string }>;
-  maxPlayers: number;
-  currentPlayers: number;
-  gameStarted: boolean;
-}
+// interface AvailableRoom {
+//   roomId: string;
+//   players: Array<{socketId:string; color?:string;playerName?: string }>;
+//   maxPlayers: number;
+//   currentPlayers: number;
+//   gameStarted: boolean;
+// }
 
 @Component({
   selector: 'app-game-setup',
@@ -24,10 +25,12 @@ interface AvailableRoom {
   styleUrls: ['./game-setup.component.css'],
 })
 export class GameSetupComponent implements OnInit {
+
+  AvailableRoom : IAvailableRoom[]=[];
   selectedPlayerCount: number = 2;
   playerName: string = '';
   view: 'menu' | 'create' | 'join' = 'menu';
-  availableRooms: AvailableRoom[] = [];
+  availableRooms: IAvailableRoom[] = [];
   selectedRoomId: string = '';
   isSocketConnected: boolean = false;
   socketId: string = '';
