@@ -16,17 +16,21 @@ export class SocketService {
   private socket: Socket | null = null;
   private connectedSubject = new BehaviorSubject<boolean>(false);
   private socketIdSubject = new BehaviorSubject<string>('');
-  private roomsSubject = new BehaviorSubject<Room[]>([]);
+  private roomsSubject =new BehaviorSubject<Room[]>([]);
   private currentRoomSubject = new BehaviorSubject<Room | null>(null);
-  private playersInRoomSubject = new BehaviorSubject<Array<{ socketId: string; color?: string }>>([]);
-  private gameStateSubject = new BehaviorSubject<any>(null);
+  private playersInRoomSubject =new BehaviorSubject<Array<{socketId: string;color?:string }>>([]);
+  private gameStateSubject =new BehaviorSubject<any>(null);
 
-  connected$ = this.connectedSubject.asObservable();
-  socketId$ = this.socketIdSubject.asObservable();
-  rooms$ = this.roomsSubject.asObservable();
+  private gameStartedSubject =new BehaviorSubject<any>(null);
+
+  connected$ =this.connectedSubject.asObservable();
+  socketId$ =this.socketIdSubject.asObservable();
+  rooms$ =this.roomsSubject.asObservable();
   currentRoom$ = this.currentRoomSubject.asObservable();
   playersInRoom$ = this.playersInRoomSubject.asObservable();
   gameState$ = this.gameStateSubject.asObservable();
+
+  gameStarted$ = this.gameStartedSubject.asObservable();
 
   constructor() {
     this.connect();
@@ -66,19 +70,19 @@ export class SocketService {
       this.playersInRoomSubject.next(data.room.players);
     });
 
-    this.socket.on('room-joined', (data: { room: Room; message: string }) => {
+    this.socket.on('room-joined', (data: {room:Room; message: string }) => {
       console.log('Joined room:', data.room);
       this.currentRoomSubject.next(data.room);
       this.playersInRoomSubject.next(data.room.players);
     });
 
-    this.socket.on('player-joined', (data: { room: Room; message: string }) => {
+    this.socket.on('player-joined',(data: { room: Room; message: string }) => {
       console.log('Player joined room:', data.message);
       this.currentRoomSubject.next(data.room);
       this.playersInRoomSubject.next(data.room.players);
     });
 
-    this.socket.on('player-left', (data: { room: Room; message: string }) => {
+    this.socket.on('player-left',(data:{room: Room; message:string }) => {
       console.log('Player left room:', data.message);
       if (data.room) {
         this.currentRoomSubject.next(data.room);
@@ -91,9 +95,11 @@ export class SocketService {
       this.roomsSubject.next(data.rooms);
     });
 
-    this.socket.on('game-started', (data: { room: Room; message: string }) => {
+    this.socket.on('game-started', (data: { room: Room; message: string;players:any }) => {
       console.log('Game started:', data.message);
       this.currentRoomSubject.next(data.room);
+
+      this.gameStartedSubject.next(data);
     });
 
     this.socket.on('game-state-update', (data: any) => {

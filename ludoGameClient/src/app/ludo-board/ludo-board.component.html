@@ -30,7 +30,8 @@
          [class.yellow]="piece.color === 'yellow'"
          [class.blue]="piece.color === 'blue'"
          [class.green]="piece.color === 'green'"
-          [class.movable]="gameService.gameState.movablePieces.includes(piece.id)" 
+         
+          [class.movable]="isMyPiece(piece) && gameState?.movablePieces?.includes(piece.id)"
          [style.left.px]="piece.currentX + getPieceOffset(piece).x"
          [style.top.px]="piece.currentY + getPieceOffset(piece).y"
          [style.transform]="'scale('+getPieceScale(piece)+ ')'"
@@ -42,15 +43,15 @@
   <div class="dice-button">
     
 <div class="turn-info">{{getCurrentPlayer()}}'s Turn</div>
-    <div class="dice-value">Dice: {{gameService.gameState.diceValue || 'Roll to start'}}</div>
+    <div class="dice-value">Dice: {{gameState?.diceValue || 'Roll to start'}}</div>
     <button class="roll-btn" 
             (click)="rollDice()" 
-            [disabled]="gameService.gameState.diceValue > 0 || isGameWon()">
-      {{gameService.gameState.diceValue > 0 ? 'Move a piece' : 'Roll Dice'}}
+            [disabled]="(gameState?.diceValue || 0 )>0 || isGameWon()">
+      {{(gameState?.diceValue ||0) > 0 ? 'Move a piece' : 'Roll Dice'}}
 
     </button>
     <div *ngIf="isGameWon()" class="win-message">
-      {{gameService.gameState.gameWon}} WINS!! 
+      {{gameState?.gameWon}} WINS!! 
     </div>
   </div>
 </div>

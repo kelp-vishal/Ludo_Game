@@ -22,8 +22,10 @@ export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   private rooms: Map<string, GameRoom> = new Map();
   private playerRooms: Map<string, string> = new Map(); // socketId= roomId
-  private colors = ['RED', 'BLUE', 'GREEN', 'YELLOW'];
-  private colorIndex = 0;
+
+  private roomColorIndex: Map<String ,number>=new Map();
+  private colors = ['RED', 'GREEN', 'BLUE', 'YELLOW'];
+  // private colors = ['RED', 'BLUE', 'GREEN', 'YELLOW'];
 
   handleConnection(client: Socket) {
     console.log('New user Connected:', client.id);
@@ -90,7 +92,8 @@ export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     this.rooms.set(roomId, room);
     this.playerRooms.set(client.id, roomId);
-    this.colorIndex = 1; // Reset for next player
+
+    this.roomColorIndex.set(roomId,1);
 
     client.join(roomId);
 
@@ -141,8 +144,9 @@ export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     // Assign color
-    const color = this.colors[this.colorIndex % this.colors.length];
-    this.colorIndex++;
+    const currentColorIndex = this.roomColorIndex.get(data.roomId) || 0;
+    const color = this.colors[currentColorIndex % this.colors.length];
+    this.roomColorIndex.set(data.roomId,currentColorIndex+1);
 
     room.players.push({
       socketId: client.id,
@@ -199,6 +203,7 @@ export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
       if (room.currentPlayers === 0) {
         this.rooms.delete(roomId);
+        this.roomColorIndex.delete(roomId);
         console.log(`Room ${roomId} deleted (empty)`);
       } else {
         // Transfer host if needed

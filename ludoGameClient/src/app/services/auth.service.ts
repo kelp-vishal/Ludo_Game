@@ -11,7 +11,7 @@ interface User {
 })
 export class AuthService {
   private apiUrl = 'http://localhost:3000/auth';
-  currentUser: Signal<User | null> = null;
-  isAuthenticated: Signal<boolean> = false;
+  // currentUser: Signal<User | null> = null;
+  // isAuthenticated: Signal<boolean> = false;
   
 }

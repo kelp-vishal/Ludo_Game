@@ -1,11 +1,12 @@
 
 import { Component, OnInit } from '@angular/core';
 import { GameService } from '../services/game.service';
-import { RoomService } from '../services/room.service';
+import { RoomService,GameRoom } from '../services/room.service';
 import { SocketService } from '../services/socket.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 interface AvailableRoom {
   roomId: string;
@@ -30,6 +31,7 @@ export class GameSetupComponent implements OnInit {
   selectedRoomId: string = '';
   isSocketConnected: boolean = false;
   socketId: string = '';
+  currentRoom$! : Observable<GameRoom| null>;
 
   constructor(
     private gameService: GameService,
@@ -39,6 +41,8 @@ export class GameSetupComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+
+    this.currentRoom$ = this.roomService.currentRoom$;
     // Checking socket connectin
     this.socketService.connected$.subscribe(connected => {
       this.isSocketConnected = connected;
@@ -57,13 +61,20 @@ export class GameSetupComponent implements OnInit {
     this.roomService.currentRoom$.subscribe(room => {
       if (room) {
         console.log('Joined room:', room);
-        if (room.currentPlayers >= 2) { // start the game when players joined the loby ,automatically
-          setTimeout(() => {
-            this.startGameInRoom();
-          }, 500);
-        }
       }
     });
+
+    this.socketService.gameStarted$.subscribe(data=> {
+      if(data && data.room){
+
+        const currentRoom=data.room;
+        const playerColors =currentRoom.players.map((p:any) => p.color || 'RED');
+        const myColor = currentRoom.players.find((p:any) => p.socketId === this.socketId) ?.color|| 'RED';
+        this.gameService.startGame(currentRoom.currentPlayers,playerColors,myColor);
+
+        this.router.navigate(['/ludo-board']);
+      }
+    })
 
     //available rooms
     this.roomService.getRoomsList();
@@ -125,16 +136,20 @@ export class GameSetupComponent implements OnInit {
       return;
     }
 
-    console.log('Starting game in room:', currentRoom.roomId);
-    this.gameService.startGame(currentRoom.currentPlayers);
+    console.log('Host Starting game in room:', currentRoom.roomId);
+    
     this.roomService.startGame();
-    this.router.navigate(['/ludo-board']);
+    // this.router.navigate(['/ludo-board']);
   }
 
   startGame(playerCount: number): void {
-    // This is the old way - now we need to be in a room first
     this.selectedPlayerCount = playerCount;
     this.showCreateRoom();
+  }
+
+  isHost(room:any):boolean
+  {
+    return room?.hostSocketId === this.socketId;
   }
 }
 

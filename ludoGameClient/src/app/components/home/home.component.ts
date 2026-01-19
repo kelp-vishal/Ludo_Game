@@ -15,9 +15,8 @@ export class HomeComponent {
       try {
         // redirect the user to either login or to the room-connecte-generate page
         console.log("Redirecting for the login or room connection");
-        // this.router.navigate(['/login']);
-        this.router.navigate(['/room-connect']);
-        // this.router.navigate(['/game-setup']);
+        this.router.navigate(['/game-setup']);
+        // this.router.navigate(['/room-connect']);
 
         // check the credentioals for the user , is the user logged in or not
         // if logged in redirect to room-connect-generate page 

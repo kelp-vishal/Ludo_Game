@@ -1,27 +1,32 @@
 .setup-screen {
     text-align: center;
     padding: 50px;
-    font: 500 20px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* font: 500 20px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); */
 }
 
 .setup-screen h2 {
-    font-size: 36px;
+    
     margin-bottom: 20px;
     color: #fff;
+}
+h2{
+    font-size: 36px;
+    font-weight: 500;
 }
 
 .setup-screen h3 {
     font-size: 24px;
     margin-bottom: 15px;
-    color: #fff;
+    color: #46d30a;
 }
 
 .connection-status {
     margin-bottom: 20px;
-    font-size: 14px;
+    font-size: 18px;
     padding: 10px;
+    font-weight: 800;
     border-radius: 5px;
 }
 
@@ -121,7 +126,8 @@
     padding: 10px 20px;
     background-color: #e0e0e0;
     border: 2px solid #ddd;
-
+    font-weight: 800;
+   
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.3s;
@@ -129,7 +135,7 @@
 
 .player-btn.active {
     background-color: #667eea;
-    color: white;
+    color: black;
     border-color: #667eea;
 }
 
