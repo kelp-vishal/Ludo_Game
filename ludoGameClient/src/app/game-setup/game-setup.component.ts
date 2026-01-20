@@ -64,7 +64,13 @@ export class GameSetupComponent implements OnInit {
       if(data && data.room){
 
         const currentRoom=data.room;
-        const playerColors =currentRoom.players.map((p:any) => p.color || 'RED');
+
+        const TURN_ORDER = ['RED', 'BLUE', 'GREEN', 'YELLOW'];
+        const joinedColors = currentRoom.players.map((p: any) => p.color);
+        const playerColors = TURN_ORDER.filter(c =>
+          joinedColors.includes(c)
+        );
+        // const playerColors =currentRoom.players.map((p:any) => p.color || 'RED');
         const myColor = currentRoom.players.find((p:any) => p.socketId === this.socketId) ?.color|| 'RED';
         this.gameService.startGame(currentRoom.currentPlayers,playerColors,myColor);
 

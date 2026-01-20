@@ -105,14 +105,20 @@ export class GameService {
       this.gameState.activePlayers =playerColors;
       this.myColor = myColor || playerColors[0];
     } else {
-      const configs = [
-        { color: 'RED', active: playerCount >= 1 },
-        { color: 'GREEN', active: playerCount >= 2 },
-        { color: 'BLUE', active: playerCount >= 3 },
-        { color: 'YELLOW', active: playerCount === 4 }
-      ];
-      this.gameState.activePlayers = configs.filter(p => p.active).map(p => p.color);
+
+      const turnOrder = ['RED','BLUE','GREEN','YELLOW'];
+
+      this.gameState.activePlayers = turnOrder.slice(0, playerCount);
       this.myColor = this.gameState.activePlayers[0];
+
+      // const configs = [
+      //   { color: 'RED', active: playerCount >= 1 },
+      //   { color: 'BLUE', active: playerCount >= 3 },
+      //   { color: 'GREEN', active: playerCount >= 2 },
+      //   { color: 'YELLOW', active: playerCount === 4 }
+      // ];
+      // this.gameState.activePlayers = configs.filter(p => p.active).map(p => p.color);
+      // this.myColor = this.gameState.activePlayers[0];
     }
 
     console.log('Starting game with players:', this.gameState.activePlayers, 'My color:', this.myColor);

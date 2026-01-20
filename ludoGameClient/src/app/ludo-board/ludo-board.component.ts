@@ -179,8 +179,7 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    
-    const oldPos = this.gameState?.pieces[pieceId] ??-1;
+    const oldPos =this.gameState?.pieces[pieceId] ??-1;
     
     // Calculate new position before animating
     const diceValue = this.gameState?.diceValue?? 0;
