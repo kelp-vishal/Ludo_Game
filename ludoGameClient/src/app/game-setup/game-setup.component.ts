@@ -9,13 +9,6 @@ import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { IAvailableRoom } from '../interfaces/ludoboard.interfaces';
 
-// interface AvailableRoom {
-//   roomId: string;
-//   players: Array<{socketId:string; color?:string;playerName?: string }>;
-//   maxPlayers: number;
-//   currentPlayers: number;
-//   gameStarted: boolean;
-// }
 
 @Component({
   selector: 'app-game-setup',

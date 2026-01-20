@@ -169,3 +169,7 @@ hr {
   color: #319890;
   text-decoration: underline;
 }
+
+.loginsu{
+  cursor: pointer;
+}

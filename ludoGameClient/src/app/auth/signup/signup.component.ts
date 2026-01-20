@@ -13,7 +13,7 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
     return null;
   }
 
-  return password.value === confirmPassword.value ? null : { passwordMismatch: true };
+  return password.value ===confirmPassword.value ? null : { passwordMismatch: true };
 }
 
 @Component({

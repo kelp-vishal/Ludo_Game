@@ -2,22 +2,18 @@
 import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { BehaviorSubject, Observable } from 'rxjs';
-
-interface Room {
-  roomId: string;
-  players: Array<{ socketId: string; color?: string }>;
-  maxPlayers: number;
-  currentPlayers: number;
-  gameStarted: boolean;
-}
+import { IRoom } from '../interfaces/socket.interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class SocketService {
+
+   Room : IRoom[]=[];
+
   private socket: Socket | null = null;
   private connectedSubject = new BehaviorSubject<boolean>(false);
   private socketIdSubject = new BehaviorSubject<string>('');
-  private roomsSubject =new BehaviorSubject<Room[]>([]);
-  private currentRoomSubject = new BehaviorSubject<Room | null>(null);
+  private roomsSubject =new BehaviorSubject<IRoom[]>([]);
+  private currentRoomSubject = new BehaviorSubject<IRoom | null>(null);
   private playersInRoomSubject =new BehaviorSubject<Array<{socketId: string;color?:string }>>([]);
   private gameStateSubject =new BehaviorSubject<any>(null);
 
@@ -41,16 +37,8 @@ export class SocketService {
       return;
     }
 
-    // this.socket = io('http://192.168.0.115:3002', {
-    //   transports: ['websocket'],
-    //   reconnection: true,
-    //   reconnectionDelay: 1000,
-    //   reconnectionDelayMax: 5000,
-    //   reconnectionAttempts: 5,
-    // });
-    
-    // this.socket = io('http://localhost:3000', {
-    //   path: '/socket.io',
+    // this.socket = io('http://localhost:3002', {
+    //   // path: '/socket.io',
     //     transports: ['polling','websocket'],
     //     reconnection: true,
     //     reconnectionDelay: 1000,
@@ -58,23 +46,14 @@ export class SocketService {
     //     reconnectionAttempts: 5,
     // });
 
-    this.socket = io('https://f1vbcpxc-3000.inc1.devtunnels.ms/', {
+    this.socket = io('https://f1vbcpxc-3002.inc1.devtunnels.ms', {
       path: '/socket.io',
-        transports: ['polling','websocket'],
+        transports: ['websocket'],
         reconnection: true,
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000,
         reconnectionAttempts: 5,
     });
-
-
-
-    // this.socket = io('https://nonsensible-rosa-coconsciously.ngrok-free.dev', {
-    //   path: '/socket.io',
-    //   transports: ['polling', 'websocket'],
-    //   reconnection: true,
-    // });
-    
 
 
     this.socket.on('connect', () => {
@@ -93,25 +72,25 @@ export class SocketService {
     });
 
     // Room events
-    this.socket.on('room-created', (data: { room: Room }) => {
+    this.socket.on('room-created', (data: { room: IRoom }) => {
       console.log('Room created:', data.room);
       this.currentRoomSubject.next(data.room);
       this.playersInRoomSubject.next(data.room.players);
     });
 
-    this.socket.on('room-joined', (data: {room:Room; message: string }) => {
+    this.socket.on('room-joined', (data: {room:IRoom; message: string }) => {
       console.log('Joined room:', data.room);
       this.currentRoomSubject.next(data.room);
       this.playersInRoomSubject.next(data.room.players);
     });
 
-    this.socket.on('player-joined',(data: { room: Room; message: string }) => {
+    this.socket.on('player-joined',(data: { room: IRoom; message: string }) => {
       console.log('Player joined room:', data.message);
       this.currentRoomSubject.next(data.room);
       this.playersInRoomSubject.next(data.room.players);
     });
 
-    this.socket.on('player-left',(data:{room: Room; message:string }) => {
+    this.socket.on('player-left',(data:{room: IRoom; message:string }) => {
       console.log('Player left room:', data.message);
       if (data.room) {
         this.currentRoomSubject.next(data.room);
@@ -119,12 +98,12 @@ export class SocketService {
       }
     });
 
-    this.socket.on('rooms-list', (data: { rooms: Room[] }) => {
+    this.socket.on('rooms-list', (data: { rooms: IRoom[] }) => {
       console.log('Available rooms:', data.rooms);
       this.roomsSubject.next(data.rooms);
     });
 
-    this.socket.on('game-started', (data: { room: Room; message: string;players:any }) => {
+    this.socket.on('game-started', (data: { room: IRoom; message: string;players:any }) => {
       console.log('Game started:', data.message);
       this.currentRoomSubject.next(data.room);
 

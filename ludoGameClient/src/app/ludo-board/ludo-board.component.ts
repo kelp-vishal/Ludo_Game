@@ -42,12 +42,12 @@ let gameState = {
 export class LudoBoardComponent implements OnInit, OnDestroy {
 
   Math = Math;
-  turnOrder = ['RED', 'YELLOW', 'GREEN', 'BLUE'];
+  // turnOrder = ['RED', 'YELLOW', 'GREEN', 'BLUE'];
+  turnOrder = ['RED', 'BLUE', 'GREEN', 'YELLOW'];
   valueDice = signal(1);
 
   pieces: IPiece[] = [];
   gameState: IGameState | null = null;
-  //15x15=225
   gridCells = Array(225).fill(0);
 
   gameService = inject(GameService);
@@ -158,7 +158,7 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
           // Normal cas
           
           // Auto-move if -one piece only
-          if (this.gameState?.movablePieces?.length === 1) {
+          if (this.gameState?.movablePieces?.length ===1) {
             const pieceId = this.gameState.movablePieces[0];
 
             setTimeout(() => {
@@ -287,6 +287,8 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
     const col = index % 15;
     return row >= 9 && row <= 15 && (col <= 5) && (col >= 0);
   }
+
+  
   isYellowHome(index: number): boolean {
     const row = Math.floor(index / 15);
     const col = index % 15;
@@ -304,6 +306,39 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
     const col = index % 15;
     return row >= 0 && row <= 5 && col <= 5;
   }
+
+  isRedBorder(index: number):boolean{
+    const row = Math.floor(index / 15);
+    const col = index % 15;
+
+    if((row == 9 && col <= 5 && col >= 0) || (row ==14 && col <= 5 && col >= 0) || (col ==0 && row >= 9 && row <= 15) ||(col == 5 && row >= 9 && row <= 15)) return true;
+    else return false;
+  }
+
+  isYellowBorder(index: number):boolean{
+    const row = Math.floor(index / 15);
+    const col = index % 15;
+
+    if((row == 9 && col >= 9) || (row ==14 && col >= 9) || (col ==9 && row >= 9) ||(col == 14 && row >= 9 )) return true;
+    else return false;
+  }
+
+  isBlueBorder(index:number):boolean{
+    const row = Math.floor(index / 15);
+    const col = index % 15;
+    if((row == 0 && col>=0 && col <=5) || (row ==5 && col>=0 && col <=5) || (col ==0 && row<=5 && row >= 0) ||(col ==5 && row<=5 && row >= 0) ) return true;
+    else return false;
+  }
+
+  isGreenBorder(index:number):boolean{
+    const row = Math.floor(index / 15);
+    const col = index % 15;
+
+    if((row == 0 && col>=9) || (row ==5 && col >= 9) || (col ==9 && row <= 5) ||(col == 14 && row <= 5 )) return true;
+    else return false;
+  }
+
+
   isSafeZone(index: number): boolean {
     const safeIndices = [122, 188, 36, 102, 201, 133, 23, 91];
     return safeIndices.includes(index);
@@ -333,6 +368,18 @@ export class LudoBoardComponent implements OnInit, OnDestroy {
   isBluePath(index: number): boolean {
     const val = [91, 106, 107, 108, 109, 110];
     return val.includes(index);
+  }
+
+  isBaseAll(index:number):boolean{
+    const row = Math.floor(index / 15);
+    const col = index % 15;
+
+    if((row === 10 && col == 1) || (row === 10 && col == 4) || (row === 13 && col == 1) || (row === 13 && col == 4)
+      || (row === 1 && col == 1) || (row === 1 && col == 4) || (row === 4 && col == 1) || (row === 4 && col == 4)
+       || (row === 1 && col == 10) || (row === 1 && col == 13) || (row === 4 && col == 10) || (row === 4 && col ==13)
+       || (row === 10 && col == 10) || (row === 10 && col == 13) || (row === 13 && col == 10) || (row === 13&& col == 13)
+    ) return true;
+    else return false;
   }
 
   // PathArrayRED = [

@@ -1,25 +1,49 @@
-import { Component } from '@angular/core';
+
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-header',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
-export class HeaderComponent {
-  constructor(private router: Router) {}
-  startGame() {
-      try {
-        // redirect the user to either login or to the room-connecte-generate page
-        console.log("Redirecting for the login or room connection");
-        this.router.navigate(['/game-setup']);
-        // this.router.navigate(['/room-connect']);
+export class HeaderComponent implements OnInit {
+  isLoggedIn = false;
+  username: string = '';
 
-        // check the credentioals for the user , is the user logged in or not
-        // if logged in redirect to room-connect-generate page 
-      } catch (error) {
-        console.error("Error starting the game:", error);
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit() {
+    // Subscribe to authentication status
+    this.authService.currentUser$.subscribe(user => {
+      this.isLoggedIn = !!user;
+      this.username = user?.username || '';
+    });
+  }
+
+  startGame() {
+    try {
+      // Check if user is logged in
+      if (this.authService.isLoggedIn()) {
+        console.log("User is authenticated, redirecting to game setup");
+        this.router.navigate(['/game-setup']);
+      } else {
+        console.log("User not authenticated, redirecting to login");
+        this.router.navigate(['/signup']);
       }
-        
+    } catch (error) {
+      console.error("Error starting the game:", error);
     }
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/']);
+  }
 }

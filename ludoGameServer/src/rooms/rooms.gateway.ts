@@ -1,36 +1,42 @@
 import { MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer, ConnectedSocket } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
+import { IGameRoom } from "src/interfaces/roomsGateway.interfaces";
 
-interface GameRoom {
-  roomId: string;
-  players: Array<{socketId: string;playerName?: string; color?: string }>;
-  maxPlayers: number;
-  currentPlayers: number;
-  gameStarted: boolean;
-  hostSocketId: string;
-  createdAt: Date;
-}
+// interface GameRoom {
+//   roomId: string;
+//   players: Array<{socketId: string;playerName?: string; color?: string }>;
+//   maxPlayers: number;
+//   currentPlayers: number;
+//   gameStarted: boolean;
+//   hostSocketId: string;
+//   createdAt: Date;
+// }
 
-@WebSocketGateway( {
+// @WebSocketGateway( {
+//   cors: {
+//     origin: ['https://f1vbcpxc-3002.inc1.devtunnels.ms/'],
+//     // origin: '*',
+//     methods: ['GET', 'POST'],
+//   },
+//   transports: ['polling','websocket'],
+// })
+
+@WebSocketGateway({
+  path: '/socket.io',
   cors: {
-    origin: 'http://localhost:4200',
-    // origin: '*',
-    methods: ['GET', 'POST'],
+    origin: '*',
+    method:['GET','POST'],
   },
-  // transports: ['websocket'],
+  transports: ['polling', 'websocket'],
 })
 
-// @WebSocketGateway({
-//   path: '/socket.io',
-//   cors: {
-//     origin: '*',
-//   },
-//   transports: ['polling', 'websocket'],
-// })
+
 export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
 
-  private rooms: Map<string, GameRoom> = new Map();
+  GameRoom :IGameRoom[]=[];
+
+  private rooms: Map<string, IGameRoom> = new Map();
   private playerRooms: Map<string, string> = new Map(); // socketId= roomId
 
   private roomColorIndex: Map<String ,number>=new Map();
@@ -116,9 +122,9 @@ export class RoomsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() data: { playerCount: number;playerName: string;socketId:string }
   ) {
 
-    console.log(' vishal visshal')
+    // console.log(' vishal visshal')
     const roomId = this.generateRoomId();
-    const room: GameRoom = {
+    const room: IGameRoom = {
       roomId,
       players: [
         {
